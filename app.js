@@ -15,7 +15,7 @@ window.addEventListener('load', function() {
 
     let totalTime = "00:20:00"; // in seconds
     // this is what I will get as USER input after parsing regex
-    let timeStamps = ["00:00:00", "00:00:15", "00:04:52", "00:09:37", "00:17:19"];
+    let timeStamps = ["00:00:00", "00:01:15", "00:04:52", "00:09:37", "00:17:19"];
     // adding total video time.. for calcultaion purposes
     timeStamps.push(totalTime);
     let labels = ["Introduction", "Uncertainty", "Probability", "Conditional Probability", "Random Variables"];
@@ -37,19 +37,36 @@ window.addEventListener('load', function() {
     let divContainer = document.createElement("div");
     divContainer.style.height = "80%";
     divContainer.id = "container";
+
+    let timeStampContainer = document.createElement("div");
+    timeStampContainer.id = "tsc";
+    let labelContainer = document.createElement("div");
+    labelContainer.id = "lc"
+
+    divContainer.appendChild(labelContainer);
+    divContainer.appendChild(timeStampContainer);
     holder.appendChild(divContainer);
 
-
-
     labels.forEach((label, index) => {
+
+        let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
+        console.log(height);
+        // create labels
         let labelDiv = document.createElement("div");
+        labelDiv.style.height = height;
+        labelDiv.className = "label"
+        labelDiv.innerText = label;
+
+        // create timestamp UI
         let timeStampUI = document.createElement("div")
         timeStampUI.className = "timestamp";
         timeStampUI.style.width = "5px";
         // console.log(divContainer.offsetHeight);
-        timeStampUI.style.height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
+        timeStampUI.style.height = height;
         // labelDiv.style.backgroundColor = random_bg_color();
-        divContainer.appendChild(timeStampUI);
+
+        timeStampContainer.appendChild(timeStampUI);
+        labelContainer.appendChild(labelDiv);
     });
 
     function random_bg_color() {
