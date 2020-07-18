@@ -18,7 +18,6 @@ window.addEventListener('load', function() {
     let timeStamps = ["00:00:00", "00:00:15", "00:04:52", "00:09:37", "00:17:19"];
     // adding total video time.. for calcultaion purposes
     timeStamps.push(totalTime);
-
     let labels = ["Introduction", "Uncertainty", "Probability", "Conditional Probability", "Random Variables"];
 
     // convert the time array in seconds format
@@ -29,7 +28,6 @@ window.addEventListener('load', function() {
     });
     console.log(timeStampsInSeconds);
     let timeStampRatios = []
-
     for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
         timeStampRatios[i] = (timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1];
     }
@@ -37,17 +35,21 @@ window.addEventListener('load', function() {
 
     // generate UI
     let divContainer = document.createElement("div");
-    divContainer.style.height = "70%";
+    divContainer.style.height = "80%";
     divContainer.id = "container";
     holder.appendChild(divContainer);
 
+
+
     labels.forEach((label, index) => {
         let labelDiv = document.createElement("div");
-        labelDiv.className = "label";
+        let timeStampUI = document.createElement("div")
+        timeStampUI.className = "timestamp";
+        timeStampUI.style.width = "5px";
         // console.log(divContainer.offsetHeight);
-        labelDiv.style.height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
-        labelDiv.style.backgroundColor = random_bg_color();
-        divContainer.appendChild(labelDiv);
+        timeStampUI.style.height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
+        // labelDiv.style.backgroundColor = random_bg_color();
+        divContainer.appendChild(timeStampUI);
     });
 
     function random_bg_color() {
