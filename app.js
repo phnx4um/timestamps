@@ -13,7 +13,19 @@ window.addEventListener('load', function() {
     00:09:37  Conditional Probability
     00:17:19  Random Variables`
 
+    // this is what I will get as USER input after parsing regex
+    let timeStamps = ["00:00:00", "00:04:52", "00:09:37", "00:17:19"];
     let labels = ["Introduction", "Uncertainty", "Probability", "Conditional Probability", "Random Variables"];
+
+    // convert the time array in seconds format
+    const timeStampsInSeconds = timeStamps.map(time => {
+        var a = time.split(':');
+        var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
+        return seconds
+    });
+
+    console.log(timeStampsInSeconds)
+
     // generate UI
     let divContainer = document.createElement("div");
     divContainer.style.height = "70%";
@@ -33,8 +45,6 @@ window.addEventListener('load', function() {
         labelDiv.style.backgroundColor = random_bg_color();
         divContainer.appendChild(labelDiv);
     });
-
-
 
     function random_bg_color() {
         var x = Math.floor(Math.random() * 256);
