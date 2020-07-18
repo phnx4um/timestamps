@@ -13,8 +13,12 @@ window.addEventListener('load', function() {
     00:09:37  Conditional Probability
     00:17:19  Random Variables`
 
+    let totalTime = "00:20:00"; // in seconds
     // this is what I will get as USER input after parsing regex
-    let timeStamps = ["00:00:00", "00:04:52", "00:09:37", "00:17:19"];
+    let timeStamps = ["00:00:00", "00:00:15", "00:04:52", "00:09:37", "00:17:19"];
+    // adding total video time.. for calcultaion purposes
+    timeStamps.push(totalTime);
+
     let labels = ["Introduction", "Uncertainty", "Probability", "Conditional Probability", "Random Variables"];
 
     // convert the time array in seconds format
@@ -23,8 +27,13 @@ window.addEventListener('load', function() {
         var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
         return seconds
     });
+    console.log(timeStampsInSeconds);
+    let timeStampRatios = []
 
-    console.log(timeStampsInSeconds)
+    for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
+        timeStampRatios[i] = (timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1];
+    }
+    console.log(timeStampRatios)
 
     // generate UI
     let divContainer = document.createElement("div");
@@ -32,16 +41,11 @@ window.addEventListener('load', function() {
     divContainer.id = "container";
     holder.appendChild(divContainer);
 
-    labels.forEach(label => {
+    labels.forEach((label, index) => {
         let labelDiv = document.createElement("div");
         labelDiv.className = "label";
-        // offset height includes border and padding 
-        // setting the height of each labelDiv same for the time being
-        // TODO later: change this based on the timestamps
-        console.log(divContainer.offsetHeight);
-        console.log(labels.length)
-        console.log(divContainer.offsetHeight / labels.length);
-        labelDiv.style.height = divContainer.offsetHeight / labels.length + "px";
+        // console.log(divContainer.offsetHeight);
+        labelDiv.style.height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
         labelDiv.style.backgroundColor = random_bg_color();
         divContainer.appendChild(labelDiv);
     });
