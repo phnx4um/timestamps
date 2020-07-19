@@ -6,6 +6,13 @@ window.addEventListener('load', function() {
 
     console.log("hello");
     let holder = document.getElementById("holder");
+    holder.addEventListener("mouseenter", e => {
+        divContainer.style.visibility = "visible";
+        // reset visibility to hidden
+        setTimeout(function() {
+            divContainer.style.visibility = "hidden";
+        }, 2000);
+    });
 
     let string = `00:00:00  Introduction
                           00:00:15  Uncertainty
@@ -15,7 +22,6 @@ window.addEventListener('load', function() {
 
     let currentTime = "500"; // in seconds
     let totalTime = "00:20:00";
-
 
     // this is what I will get as USER input after parsing regex
     let timeStamps = ["00:00:00", "00:01:15", "00:04:52", "00:09:37", "00:17:19"];
@@ -39,6 +45,7 @@ window.addEventListener('load', function() {
     // generate UI
     let divContainer = document.createElement("div");
     divContainer.style.height = "80%";
+    divContainer.style.visibility = "hidden";
     divContainer.id = "container";
 
     let timeStampContainer = document.createElement("div");
