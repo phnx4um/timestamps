@@ -4,6 +4,8 @@ window.addEventListener('load', function() {
     // get the data from textarea process it
     // populate timestamps array and label array
 
+    let labelColor = "red";
+    let timeStampColor = "#FF7F50";
     console.log("hello");
     let holder = document.getElementById("holder");
     holder.addEventListener("mouseenter", e => {
@@ -13,28 +15,25 @@ window.addEventListener('load', function() {
         console.log(timeStampsInSeconds)
         for (let i = 0; i < timeStampsInSeconds.length; i++) {
             if (timeStampsInSeconds[i] >= currentTime) {
-                console.log(i);
                 currentTS = i;
                 break;
             }
         }
-        // now chage UI color to display which topics are done
+        // change UI color for topics which are done
         for (let i = 0; i < currentTS; i++) {
             if (i == (currentTS - 1)) {
-                console.log(i);
                 // this topic is still going on
-                let tsid = "ts" + i.toString();
                 let labeltextid = "labeltext" + i.toString();
-                document.getElementById(labeltextid).style.backgroundColor = "red";
+                document.getElementById(labeltextid).style.backgroundColor = labelColor;
                 break;
             }
-            let labelid = "ts" + i.toString();
-            document.getElementById(labelid).style.backgroundColor = "#FF7F50";
+            let tsid = "ts" + i.toString();
+            document.getElementById(tsid).style.backgroundColor = timeStampColor;
         }
 
         // divContainer.style.visibility = "visible";
 
-        // reset visibility to hidden
+        // // reset visibility to hidden
         // setTimeout(function() {
         //     divContainer.style.visibility = "hidden";
         // }, 2000);
@@ -45,7 +44,7 @@ window.addEventListener('load', function() {
                     00:00:15  Uncertainty
                     00:04:52  Probability
                     00:09:37  Conditional Probability
-                    00:17:19  Random Variables`
+                    00:17:19  Random Variables`;
 
 
     let totalTime = "00:20:00";
@@ -82,6 +81,7 @@ window.addEventListener('load', function() {
 
     divContainer.appendChild(labelContainer);
     divContainer.appendChild(timeStampContainer);
+
     holder.appendChild(divContainer);
 
     labels.forEach((label, index) => {
