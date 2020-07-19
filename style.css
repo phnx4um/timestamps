@@ -9,7 +9,7 @@
 
 #container {
     display: grid;
-    width: 100px;
+    width: 300px;
     grid-template-columns: 1fr 20px;
     grid-template-rows: 1fr;
     grid-template-areas: "lc tsc";
@@ -31,7 +31,7 @@
 
 .timestamp {
     margin-top: 2px;
-    background-color: rgb(110, 109, 109);
+    background-color: rgb(85, 83, 83);
     opacity: 0.6;
 }
 
@@ -43,5 +43,15 @@
     letter-spacing: 0.6px;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
     font-family: 'P22 Underground Pro Medium', arial, helvetica, sans-serif;
+}
+
+.labeltext {
+    background-color: black;
+    opacity: 0.3;
+    padding: 3px;
+    color: azure;
+    border-radius: 2px;
 }

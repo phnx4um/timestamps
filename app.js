@@ -13,7 +13,10 @@ window.addEventListener('load', function() {
     00:09:37  Conditional Probability
     00:17:19  Random Variables`
 
-    let totalTime = "00:20:00"; // in seconds
+    let currentTime = "500"; // in seconds
+    let totalTime = "00:20:00";
+
+
     // this is what I will get as USER input after parsing regex
     let timeStamps = ["00:00:00", "00:01:15", "00:04:52", "00:09:37", "00:17:19"];
     // adding total video time.. for calcultaion purposes
@@ -48,14 +51,13 @@ window.addEventListener('load', function() {
     holder.appendChild(divContainer);
 
     labels.forEach((label, index) => {
-
         let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
         console.log(height);
         // create labels
         let labelDiv = document.createElement("div");
         labelDiv.style.height = height;
         labelDiv.className = "label"
-        labelDiv.innerText = label;
+        labelDiv.innerHTML = '<span class="labeltext">' + label + '</span>';
 
         // create timestamp UI
         let timeStampUI = document.createElement("div")
@@ -63,7 +65,7 @@ window.addEventListener('load', function() {
         timeStampUI.style.width = "5px";
         // console.log(divContainer.offsetHeight);
         timeStampUI.style.height = height;
-        // labelDiv.style.backgroundColor = random_bg_color();
+        // timeStampUI.style.backgroundColor = random_bg_color();
 
         timeStampContainer.appendChild(timeStampUI);
         labelContainer.appendChild(labelDiv);
