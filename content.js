@@ -7,104 +7,161 @@ window.addEventListener('load', function() {
     let labelColor = "red";
     let timeStampColor = "#FF7F50";
     console.log("hello");
-    let holder = document.getElementById("holder");
-    holder.addEventListener("mouseenter", e => {
-        // get this from youtube
-        let currentTime = "500"; // in seconds
-        let currentTS;
-        console.log(timeStampsInSeconds)
-        for (let i = 0; i < timeStampsInSeconds.length; i++) {
-            if (timeStampsInSeconds[i] >= currentTime) {
-                currentTS = i;
-                break;
-            }
+
+    // regex to get the timestamps
+    const regex = /^(?:(\d{2}:\d{2}:\d{2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
+
+    let holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
+    console.log(holder.offsetHeight);
+
+    // add a button to the screen
+    // clicking on that would open the timestamp UI 
+    let activateButton = document.createElement("div");
+    activateButton.id = "activate-ext";
+    activateButton.addEventListener("click", getData);
+    holder.appendChild(activateButton);
+
+    function getData() {
+        // get the tags from description
+        let description = document.querySelector("#description").textContent;
+        let totalTime = document.querySelector(".ytp-time-duration").innerText;
+        console.log(description);
+        console.log(totalTime);
+
+        let match = regex.exec(description);
+        console.log(match);
+
+        // let timeStamps = ["00:00:00", "00:01:15", "00:04:52", "00:09:37", "00:17:19"];
+        // let labels = ["title1", "title2", "title3", "title4", "title5"];
+        let timeStamps = [];
+        let labels = [];
+
+        let timeIndex;
+        let labelIndex;
+
+        if (match[1] != undefined) {
+            timeIndex = 1;
+            labelIndex = 2;
+        } else {
+            timeIndex = 3;
+            labelIndex = 4;
         }
-        // change UI color for topics which are done
-        for (let i = 0; i < currentTS; i++) {
-            if (i == (currentTS - 1)) {
-                // this topic is still going on
-                let labeltextid = "labeltext" + i.toString();
-                document.getElementById(labeltextid).style.backgroundColor = labelColor;
-                break;
-            }
-            let tsid = "ts" + i.toString();
-            document.getElementById(tsid).style.backgroundColor = timeStampColor;
+
+        // generate arrays
+        while (match) {
+            timeStamps.push(match[timeIndex]);
+            labels.push(match[labelIndex]);
+            match = regex.exec(description)
         }
 
-        // divContainer.style.visibility = "visible";
+        // adding total video time.. for calcultaion purposes
+        timeStamps.push(totalTime);
 
-        // // reset visibility to hidden
-        // setTimeout(function() {
-        //     divContainer.style.visibility = "hidden";
-        // }, 2000);
-    });
+        console.log(timeStamps);
+        console.log(labels);
 
-    // we will be getting this from textarea
-    let string = `00:00:00  Introduction
-                    00:00:15  Uncertainty
-                    00:04:52  Probability
-                    00:09:37  Conditional Probability
-                    00:17:19  Random Variables`;
+        let values = computeTimeRatios(timeStamps);
+        let timeStampsInSeconds = values.timeStampsInSeconds;
+        let timeRatios = values.timeStampRatios;
 
+        generateUI(labels, timeRatios);
 
-    let totalTime = "00:20:00";
+        holder.addEventListener("mouseenter", e => {
+            // get this from youtube
+            let currentTime = document.querySelector(".ytp-time-current").innerText;
+            currentTime = getTimeInSeconds(currentTime);
+            let currentTS;
+            // console.log(timeStampsInSeconds)
+            for (let i = 0; i < timeStampsInSeconds.length; i++) {
+                if (timeStampsInSeconds[i] >= currentTime) {
+                    currentTS = i;
+                    break;
+                }
+            }
+            // change UI color for topics which are done
+            for (let i = 0; i < currentTS; i++) {
+                if (i == (currentTS - 1)) {
+                    // this topic is still going on
+                    let labeltextid = "labeltext" + i.toString();
+                    document.getElementById(labeltextid).style.backgroundColor = labelColor;
+                    break;
+                }
+                let tsid = "ts" + i.toString();
+                document.getElementById(tsid).style.backgroundColor = timeStampColor;
+            }
 
-    // this is what I will get as USER input after parsing regex
-    let timeStamps = ["00:00:00", "00:01:15", "00:04:52", "00:09:37", "00:17:19"];
-    // adding total video time.. for calcultaion purposes
-    timeStamps.push(totalTime);
-    let labels = ["Introduction", "Uncertainty", "Probability", "Conditional Probability", "Random Variables"];
+            // divContainer.style.visibility = "visible";
 
-    // convert the time array in seconds format
-    const timeStampsInSeconds = timeStamps.map(time => {
-        var a = time.split(':');
-        var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
-        return seconds
-    });
-    // console.log(timeStampsInSeconds);
-    let timeStampRatios = []
-    for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
-        timeStampRatios[i] = (timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1];
+            // // reset visibility to hidden
+            // setTimeout(function() {
+            //     divContainer.style.visibility = "hidden";
+            // }, 2000);
+        });
+
     }
-    console.log(timeStampRatios)
 
-    // generate UI
-    let divContainer = document.createElement("div");
-    divContainer.style.height = "80%";
-    // divContainer.style.visibility = "hidden";
-    divContainer.id = "container";
+    function computeTimeRatios(timeStamps) {
 
-    let timeStampContainer = document.createElement("div");
-    timeStampContainer.id = "tsc";
-    let labelContainer = document.createElement("div");
-    labelContainer.id = "lc"
+        // convert the time array in seconds format
+        let timeStampsInSeconds = timeStamps.map(time => {
+            var a = time.split(':');
+            var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
+            return seconds
+        });
+        // console.log(timeStampsInSeconds);
 
-    divContainer.appendChild(labelContainer);
-    divContainer.appendChild(timeStampContainer);
+        let timeStampRatios = []
+        for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
+            timeStampRatios[i] = (timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1];
+        }
+        console.log(timeStampRatios);
 
-    holder.appendChild(divContainer);
+        return {
+            timeStampsInSeconds: timeStampsInSeconds,
+            timeStampRatios: timeStampRatios,
+        };
 
-    labels.forEach((label, index) => {
-        let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
-        console.log(height);
-        // create labels
-        let labelDiv = document.createElement("div");
-        labelDiv.style.height = height;
-        labelDiv.className = "label";
-        labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
+    }
 
-        // create timestamp UI
-        let timeStampUI = document.createElement("div")
-        timeStampUI.className = "timestamp";
-        timeStampUI.style.width = "5px";
-        timeStampUI.id = "ts" + index.toString();
-        // console.log(divContainer.offsetHeight);
-        timeStampUI.style.height = height;
-        // timeStampUI.style.backgroundColor = random_bg_color();
+    function generateUI(labels, timeStampRatios) {
+        // generate UI
+        let divContainer = document.createElement("div");
+        holder.appendChild(divContainer);
+        divContainer.style.height = "80%";
+        // divContainer.style.visibility = "hidden";
+        divContainer.id = "my-container";
 
-        timeStampContainer.appendChild(timeStampUI);
-        labelContainer.appendChild(labelDiv);
-    });
+        let timeStampContainer = document.createElement("div");
+        timeStampContainer.id = "tsc";
+        let labelContainer = document.createElement("div");
+        labelContainer.id = "lc"
+
+        divContainer.appendChild(labelContainer);
+        divContainer.appendChild(timeStampContainer);
+
+        labels.forEach((label, index) => {
+            let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
+            console.log(height);
+            // create labels
+            let labelDiv = document.createElement("div");
+            labelDiv.style.height = height;
+            labelDiv.className = "label";
+            labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
+
+            // create timestamp UI
+            let timeStampUI = document.createElement("div")
+            timeStampUI.className = "timestamp";
+            timeStampUI.style.width = "5px";
+            timeStampUI.id = "ts" + index.toString();
+            // console.log(divContainer.offsetHeight);
+            timeStampUI.style.height = height;
+            // timeStampUI.style.backgroundColor = random_bg_color();
+
+            timeStampContainer.appendChild(timeStampUI);
+            labelContainer.appendChild(labelDiv);
+        });
+
+    }
 
     function random_bg_color() {
         var x = Math.floor(Math.random() * 256);
@@ -115,4 +172,9 @@ window.addEventListener('load', function() {
         return bgColor
     }
 
+    function getTimeInSeconds(time) {
+        var a = time.split(':');
+        var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
+        return seconds
+    }
 });

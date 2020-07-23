@@ -5,7 +5,7 @@
     "author": "Nitin Verma",
     "description": "",
     "permissions": [
-        ""
+        "tabs"
     ],
     "content_scripts": [{
         "matches": [
@@ -13,15 +13,10 @@
         ],
         "js": [
             "content.js"
-        ]
+        ],
+        "css": ["style.css"]
     }],
-    "background": {
-        "scripts": [
-            "background.js"
-        ]
-    },
     "browser_action": {
-        "default_icon": "logo.png",
         "default_popup": "index.html",
         "default_title": "A tooltip popup description when you hover over the Chrome Extension icon."
     }
