@@ -8,8 +8,9 @@ window.addEventListener('load', function() {
     let timeStampColor = "#FF7F50";
     console.log("hello");
 
-    // regex to get the timestamps
-    const regex = /^(?:(\d{2}:\d{2}:\d{2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
+    // regex to get the timestamps // improve ... these are cases when this will not work..
+    // const regex = /^(?:(\d{2}:\d{2}:\d{2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
+    const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
     let holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
     console.log(holder.offsetHeight);
@@ -41,19 +42,19 @@ window.addEventListener('load', function() {
             timeIndex = 1;
             labelIndex = 2;
         } else {
-            timeIndex = 3;
-            labelIndex = 4;
+            timeIndex = 4;
+            labelIndex = 3;
         }
 
         // generate arrays
         while (match) {
-            timeStamps.push(match[timeIndex]);
+            timeStamps.push(timeToHHMMSS(match[timeIndex]));
             labels.push(match[labelIndex]);
             match = regex.exec(description)
         }
 
         // adding total video time.. for calcultaion purposes
-        timeStamps.push(totalTime);
+        timeStamps.push(timeToHHMMSS(totalTime));
 
         console.log(timeStamps);
         console.log(labels);
@@ -82,7 +83,7 @@ window.addEventListener('load', function() {
 
             // get current time
             let currentTime = document.querySelector(".ytp-time-current").innerText;
-            currentTime = getTimeInSeconds(currentTime);
+            currentTime = getTimeInSeconds(timeToHHMMSS(currentTime));
             console.log(currentTime);
             let currentTS = 0;
             // console.log(timeStampsInSeconds)
@@ -113,6 +114,22 @@ window.addEventListener('load', function() {
             // }, 2000);
         });
 
+    }
+
+    function timeToHHMMSS(time) {
+        switch (time.split(':').length) {
+            case 3:
+                return time;
+            case 2:
+                time = "00:" + time;
+                return time
+            case 1:
+                time = "00:00:" + time;
+                break;
+            default:
+                console.log("NOT SUPPORTED");
+        }
+        return time;
     }
 
     function computeTimeRatios(timeStamps) {
