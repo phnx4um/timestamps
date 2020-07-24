@@ -23,7 +23,7 @@ window.addEventListener('load', function() {
     holder.appendChild(activateButton);
 
     function getData() {
-        // get the tags from description
+        // get data from description
         let description = document.querySelector("#description").textContent;
         let totalTime = document.querySelector(".ytp-time-duration").innerText;
         console.log(description);
@@ -31,6 +31,10 @@ window.addEventListener('load', function() {
 
         let match = regex.exec(description);
         // console.log(match);
+        if (match === null) {
+            console.log("Sorry No timestamps found");
+            return 0;
+        }
 
         let timeStamps = [];
         let labels = [];
@@ -80,7 +84,6 @@ window.addEventListener('load', function() {
             });
 
             // render again
-
             // get current time
             let currentTime = document.querySelector(".ytp-time-current").innerText;
             currentTime = getTimeInSeconds(timeToHHMMSS(currentTime));
@@ -160,9 +163,11 @@ window.addEventListener('load', function() {
         // generate UI
         let divContainer = document.createElement("div");
         holder.appendChild(divContainer);
-        divContainer.style.height = "80%";
+        divContainer.style.height = "70%";
         // divContainer.style.visibility = "hidden";
         divContainer.id = "my-container";
+
+
 
         let timeStampContainer = document.createElement("div");
         timeStampContainer.id = "tsc";

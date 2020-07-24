@@ -1,12 +1,3 @@
-#holder {
-    height: 500px;
-    width: 500px;
-    background-color: azure;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 #activate-ext {
     position: absolute;
     top: 20px;
@@ -26,7 +17,10 @@
     grid-template-rows: 1fr;
     grid-template-areas: "lc tsc";
     position: absolute;
-    top: 30px;
+    top: 0px;
+    bottom: 0px;
+    margin-top: auto;
+    margin-bottom: auto;
     right: 30px;
     z-index: 9999;
     overflow-y: scroll;
