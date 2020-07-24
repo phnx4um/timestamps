@@ -146,9 +146,10 @@ window.addEventListener('load', function() {
         });
         console.log(timeStampsInSeconds);
 
-        let timeStampRatios = []
+        let timeStampRatios = [];
+        // mulplipying by 2 just to make rations more visible
         for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
-            timeStampRatios[i] = (timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1];
+            timeStampRatios[i] = ((timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1]) * 2;
         }
         console.log(timeStampRatios);
 
@@ -166,7 +167,6 @@ window.addEventListener('load', function() {
         divContainer.style.height = "70%";
         // divContainer.style.visibility = "hidden";
         divContainer.id = "my-container";
-
 
 
         let timeStampContainer = document.createElement("div");
