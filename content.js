@@ -4,7 +4,7 @@ window.addEventListener('load', function() {
     // get the data from textarea process it
     // populate timestamps array and label array
 
-    let labelColor = "red";
+    let labelColor = "blue";
     let timeStampColor = "#FF7F50";
     console.log("hello");
 
@@ -29,10 +29,8 @@ window.addEventListener('load', function() {
         console.log(totalTime);
 
         let match = regex.exec(description);
-        console.log(match);
+        // console.log(match);
 
-        // let timeStamps = ["00:00:00", "00:01:15", "00:04:52", "00:09:37", "00:17:19"];
-        // let labels = ["title1", "title2", "title3", "title4", "title5"];
         let timeStamps = [];
         let labels = [];
 
@@ -67,12 +65,29 @@ window.addEventListener('load', function() {
         generateUI(labels, timeRatios);
 
         holder.addEventListener("mouseenter", e => {
-            // get this from youtube
+            // back to original state
+            allTimeStampsUI = document.querySelectorAll(".timestamp");
+            allLabelText = document.querySelectorAll(".labeltext");
+
+            allTimeStampsUI.forEach(timeStampUI => {
+                console.log(timeStampUI);
+                timeStampUI.style.backgroundColor = "rgb(85, 83, 83)";
+            });
+            allLabelText.forEach(labelText => {
+                console.log(labelText);
+                labelText.style.backgroundColor = "black";
+            });
+
+            // render again
+
+            // get current time
             let currentTime = document.querySelector(".ytp-time-current").innerText;
             currentTime = getTimeInSeconds(currentTime);
-            let currentTS;
+            console.log(currentTime);
+            let currentTS = 0;
             // console.log(timeStampsInSeconds)
             for (let i = 0; i < timeStampsInSeconds.length; i++) {
+                console.log(timeStampsInSeconds[i]);
                 if (timeStampsInSeconds[i] >= currentTime) {
                     currentTS = i;
                     break;
@@ -101,6 +116,7 @@ window.addEventListener('load', function() {
     }
 
     function computeTimeRatios(timeStamps) {
+        // get all labels and timestamps and set thei background color to default
 
         // convert the time array in seconds format
         let timeStampsInSeconds = timeStamps.map(time => {
@@ -108,7 +124,7 @@ window.addEventListener('load', function() {
             var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
             return seconds
         });
-        // console.log(timeStampsInSeconds);
+        console.log(timeStampsInSeconds);
 
         let timeStampRatios = []
         for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
