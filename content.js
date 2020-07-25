@@ -5,33 +5,6 @@ window.addEventListener('load', function() {
     let labelColor = "blue";
     let timeStampColor = "#FF7F50";
     console.log("hello");
-
-
-    TAsettingsMenu = document.createElement("div");
-    TAsettingsMenu.id = "ts-taSettings";
-    // later generate this using shadow dom...
-    // and add textarea for user input too.....    
-    TAsettingsMenu.innerHTML = `
-        <div>
-            <input type="color" id="ts-label-bg" name="label"
-                value="#e66465">
-            <label for="ts-label-bg">LABEL</label>
-        </div>
-
-        <div>
-            <input type="color" id="ts-tsui-color" name="tsUI"
-                    value="#f6b73c">
-            <label for="ts-tsui-color">TimeStampUI</label>
-        </div>
-
-        <button>SUBMIT</button>
-    `;
-
-    let videoMetaInfo = document.getElementById("meta");
-    videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
-
-
-
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
@@ -44,6 +17,51 @@ window.addEventListener('load', function() {
     activateButton.id = "activate-ext";
     activateButton.addEventListener("click", getData);
     holder.appendChild(activateButton);
+
+
+    TAsettingsMenu = document.createElement("div");
+    TAsettingsMenu.id = "ts-taSettings";
+
+
+
+    // later generate this using shadow dom...
+    // and add textarea for user input too.....    
+    TAsettingsMenu.innerHTML = `
+        <button class="ts-collapsible">Open Collapsible</button>
+        <div class="ts-settings-content"> 
+            <div>
+                <input type="color" id="ts-label-bg" name="label"
+                    value="#e66465">
+                <label for="ts-label-bg">LABEL</label>
+            </div>
+
+            <div>
+                <input type="color" id="ts-tsui-color" name="tsUI"
+                        value="#f6b73c">
+                <label for="ts-tsui-color">TimeStampUI</label>
+            </div>
+
+            <button>SUBMIT</button>
+        </div>
+    `;
+
+    let videoMetaInfo = document.getElementById("meta");
+    videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
+
+    var coll = document.getElementsByClassName("ts-collapsible")[0];
+    console.log(coll);
+    coll.addEventListener("click", function() {
+        this.classList.toggle("ts-active");
+        var content = this.nextElementSibling;
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = "200px";
+        }
+    });
+
+
+
 
     function getData() {
         // get data from description

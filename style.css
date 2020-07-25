@@ -1,8 +1,36 @@
+/* style for settings menu starts here */
+
 #ts-taSettings {
-    height: 200px;
-    background-color: antiquewhite;
     margin-top: 20px;
 }
+
+.ts-collapsible {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.ts-active,
+.ts-collapsible:hover {
+    background-color: #555;
+}
+
+.ts-settings-content {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    background-color: #f1f1f1;
+}
+
+
+/* style for settings menu ends here */
 
 #activate-ext {
     position: absolute;
