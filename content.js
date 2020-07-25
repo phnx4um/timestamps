@@ -1,15 +1,38 @@
 window.addEventListener('load', function() {
-    // let commentsDiv = document.getElementById("comments");
-    // let parentDiv = commentsDiv.parentNode;
-    // get the data from textarea process it
-    // populate timestamps array and label array
 
+
+    // get these values from the chrome storage..
     let labelColor = "blue";
     let timeStampColor = "#FF7F50";
     console.log("hello");
 
+
+    TAsettingsMenu = document.createElement("div");
+    TAsettingsMenu.id = "ts-taSettings";
+    // later generate this using shadow dom...
+    // and add textarea for user input too.....    
+    TAsettingsMenu.innerHTML = `
+        <div>
+            <input type="color" id="ts-label-bg" name="label"
+                value="#e66465">
+            <label for="ts-label-bg">LABEL</label>
+        </div>
+
+        <div>
+            <input type="color" id="ts-tsui-color" name="tsUI"
+                    value="#f6b73c">
+            <label for="ts-tsui-color">TimeStampUI</label>
+        </div>
+
+        <button>SUBMIT</button>
+    `;
+
+    let videoMetaInfo = document.getElementById("meta");
+    videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
+
+
+
     // regex to get the timestamps // improve ... these are cases when this will not work..
-    // const regex = /^(?:(\d{2}:\d{2}:\d{2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
     let holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
@@ -75,11 +98,11 @@ window.addEventListener('load', function() {
             allLabelText = document.querySelectorAll(".labeltext");
 
             allTimeStampsUI.forEach(timeStampUI => {
-                console.log(timeStampUI);
+                // console.log(timeStampUI);
                 timeStampUI.style.backgroundColor = "rgb(85, 83, 83)";
             });
             allLabelText.forEach(labelText => {
-                console.log(labelText);
+                // console.log(labelText);
                 labelText.style.backgroundColor = "black";
             });
 
@@ -91,7 +114,7 @@ window.addEventListener('load', function() {
             let currentTS = 0;
             // console.log(timeStampsInSeconds)
             for (let i = 0; i < timeStampsInSeconds.length; i++) {
-                console.log(timeStampsInSeconds[i]);
+                // console.log(timeStampsInSeconds[i]);
                 if (timeStampsInSeconds[i] >= currentTime) {
                     currentTS = i;
                     break;
