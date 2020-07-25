@@ -1,12 +1,24 @@
 window.addEventListener('load', function() {
 
 
-    // get these values from the chrome storage..
+    // get these values from the chrome storage..if present 
+    // otherwise these are the default values
     let labelColor = "blue";
     let timeStampColor = "#FF7F50";
+
     console.log("hello");
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
+
+    chrome.storage.sync.get(['settingsInfo'], function(data) {
+        // check if data exists.
+        if (data) {
+            console.log(data);
+            labelColor = data.settingsInfo.lc;
+            timeStampColor = data.settingsInfo.tsc;
+            console.log(labelColor, timeStampColor);
+        }
+    });
 
     let holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
     console.log(holder.offsetHeight);
@@ -21,7 +33,6 @@ window.addEventListener('load', function() {
 
     TAsettingsMenu = document.createElement("div");
     TAsettingsMenu.id = "ts-taSettings";
-
 
 
     // later generate this using shadow dom...
@@ -41,14 +52,14 @@ window.addEventListener('load', function() {
                 <label for="ts-tsui-color">TimeStampUI</label>
             </div>
 
-            <button>SUBMIT</button>
+            <button id="ts-submitBtn-setting">SUBMIT</button>
         </div>
     `;
 
     let videoMetaInfo = document.getElementById("meta");
     videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
 
-    var coll = document.getElementsByClassName("ts-collapsible")[0];
+    let coll = document.getElementsByClassName("ts-collapsible")[0];
     console.log(coll);
     coll.addEventListener("click", function() {
         this.classList.toggle("ts-active");
@@ -60,7 +71,21 @@ window.addEventListener('load', function() {
         }
     });
 
-
+    let settingsButton = document.querySelector("#ts-submitBtn-setting");
+    settingsButton.addEventListener("click", event => {
+        let labelColor = document.querySelector("#ts-label-bg").value;
+        let tsUIColor = document.querySelector("#ts-tsui-color").value;
+        console.log(labelColor);
+        let info = {
+            lc: labelColor,
+            tsc: tsUIColor
+        };
+        // Save it using the Chrome extension storage API.
+        chrome.storage.sync.set({ 'settingsInfo': info }, function() {
+            // Notify that we saved.
+            console.log('Settings saved');
+        });
+    });
 
 
     function getData() {

@@ -5,7 +5,8 @@
     "author": "Nitin Verma",
     "description": "",
     "permissions": [
-        "tabs"
+        "tabs",
+        "storage"
     ],
     "content_scripts": [{
         "matches": [
