@@ -1,12 +1,18 @@
-window.addEventListener('load', function() {
+if (document.querySelector("#activate-ext")) {
+    // the extension was loaded previously and is still active
+    // no need to build new UI... just remove the previous UI
+    if (document.querySelector("#my-container")) {
+        document.querySelector("#my-container").remove();
+    }
 
+} else {
+    console.log("hello !st time huh.... :p");
 
     // get these values from the chrome storage..if present 
     // otherwise these are the default values
     let labelColor = "blue";
     let timeStampColor = "#FF7F50";
 
-    console.log("hello");
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
@@ -31,9 +37,11 @@ window.addEventListener('load', function() {
     holder.appendChild(activateButton);
 
 
+    ////////////////////////////////////////////// 
+    // SETTINGS MENU CODE 
+    //////////////////////////////////////////////
     TAsettingsMenu = document.createElement("div");
     TAsettingsMenu.id = "ts-taSettings";
-
 
     // later generate this using shadow dom...
     // and add textarea for user input too.....    
@@ -133,9 +141,59 @@ window.addEventListener('load', function() {
         let timeStampsInSeconds = values.timeStampsInSeconds;
         let timeRatios = values.timeStampRatios;
 
-        generateUI(labels, timeRatios);
+        generateUI(labels, timeRatios, timeStampsInSeconds);
 
-        holder.addEventListener("mouseenter", e => {
+    }
+
+    function timeToHHMMSS(time) {
+        switch (time.split(':').length) {
+            case 3:
+                return time;
+            case 2:
+                time = "00:" + time;
+                return time
+            case 1:
+                time = "00:00:" + time;
+                break;
+            default:
+                console.log("NOT SUPPORTED");
+        }
+        return time;
+    }
+
+    function computeTimeRatios(timeStamps) {
+        // get all labels and timestamps and set thei background color to default
+
+        // convert the time array in seconds format
+        let timeStampsInSeconds = timeStamps.map(time => {
+            var a = time.split(':');
+            var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
+            return seconds
+        });
+        console.log(timeStampsInSeconds);
+
+        let timeStampRatios = [];
+        // mulplipying by 2 just to make rations more visible
+        for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
+            timeStampRatios[i] = ((timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1]) * 2;
+        }
+        console.log(timeStampRatios);
+
+        return {
+            timeStampsInSeconds: timeStampsInSeconds,
+            timeStampRatios: timeStampRatios,
+        };
+
+    }
+
+    function generateUI(labels, timeStampRatios, timeStampsInSeconds) {
+        // generate UI
+        let divContainer = document.createElement("div");
+        holder.appendChild(divContainer);
+        divContainer.style.height = "70%";
+        // divContainer.style.visibility = "hidden";
+        divContainer.id = "my-container";
+        divContainer.addEventListener("mouseenter", e => {
             // back to original state
             allTimeStampsUI = document.querySelectorAll(".timestamp");
             allLabelText = document.querySelectorAll(".labeltext");
@@ -181,58 +239,9 @@ window.addEventListener('load', function() {
             // setTimeout(function() {
             //     divContainer.style.visibility = "hidden";
             // }, 2000);
+
         });
 
-    }
-
-    function timeToHHMMSS(time) {
-        switch (time.split(':').length) {
-            case 3:
-                return time;
-            case 2:
-                time = "00:" + time;
-                return time
-            case 1:
-                time = "00:00:" + time;
-                break;
-            default:
-                console.log("NOT SUPPORTED");
-        }
-        return time;
-    }
-
-    function computeTimeRatios(timeStamps) {
-        // get all labels and timestamps and set thei background color to default
-
-        // convert the time array in seconds format
-        let timeStampsInSeconds = timeStamps.map(time => {
-            var a = time.split(':');
-            var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
-            return seconds
-        });
-        console.log(timeStampsInSeconds);
-
-        let timeStampRatios = [];
-        // mulplipying by 2 just to make rations more visible
-        for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
-            timeStampRatios[i] = ((timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1]) * 2;
-        }
-        console.log(timeStampRatios);
-
-        return {
-            timeStampsInSeconds: timeStampsInSeconds,
-            timeStampRatios: timeStampRatios,
-        };
-
-    }
-
-    function generateUI(labels, timeStampRatios) {
-        // generate UI
-        let divContainer = document.createElement("div");
-        holder.appendChild(divContainer);
-        divContainer.style.height = "70%";
-        // divContainer.style.visibility = "hidden";
-        divContainer.id = "my-container";
 
 
         let timeStampContainer = document.createElement("div");
@@ -281,4 +290,5 @@ window.addEventListener('load', function() {
         var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
         return seconds
     }
-});
+
+}
