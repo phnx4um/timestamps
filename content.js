@@ -183,7 +183,6 @@ if (document.querySelector("#activate-ext")) {
             timeStampsInSeconds: timeStampsInSeconds,
             timeStampRatios: timeStampRatios,
         };
-
     }
 
     function generateUI(labels, timeStampRatios, timeStampsInSeconds) {
@@ -193,8 +192,19 @@ if (document.querySelector("#activate-ext")) {
         divContainer.style.height = "70%";
         // divContainer.style.visibility = "hidden";
         divContainer.id = "my-container";
+
+        let timeStampContainer = document.createElement("div");
+        timeStampContainer.id = "tsc";
+        timeStampContainer.style.visibility = "hidden";
+        let labelContainer = document.createElement("div");
+        labelContainer.id = "lc"
+        labelContainer.style.visibility = "hidden";
+
+        divContainer.appendChild(labelContainer);
+        divContainer.appendChild(timeStampContainer);
+
         divContainer.addEventListener("mouseenter", e => {
-            // back to original state
+            // remove previously rendered labelsColors and timestamp color
             allTimeStampsUI = document.querySelectorAll(".timestamp");
             allLabelText = document.querySelectorAll(".labeltext");
 
@@ -234,23 +244,18 @@ if (document.querySelector("#activate-ext")) {
             }
 
             // divContainer.style.visibility = "visible";
+            timeStampContainer.style.visibility = "visible";
+            labelContainer.style.visibility = "visible";
 
-            // // reset visibility to hidden
-            // setTimeout(function() {
-            //     divContainer.style.visibility = "hidden";
-            // }, 2000);
+            // reset visibility to hidden
+            setTimeout(function() {
+                // divContainer.style.visibility = "hidden";
+                timeStampContainer.style.visibility = "hidden";
+                labelContainer.style.visibility = "hidden";
+            }, 2000);
 
         });
 
-
-
-        let timeStampContainer = document.createElement("div");
-        timeStampContainer.id = "tsc";
-        let labelContainer = document.createElement("div");
-        labelContainer.id = "lc"
-
-        divContainer.appendChild(labelContainer);
-        divContainer.appendChild(timeStampContainer);
 
         labels.forEach((label, index) => {
             let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
