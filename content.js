@@ -1,12 +1,4 @@
-if (document.querySelector("#activate-ext")) {
-    // the extension was loaded previously and is still active
-    // no need to build new UI... just remove the previous UI
-    if (document.querySelector("#my-container")) {
-        document.querySelector("#my-container").remove();
-    }
-
-} else {
-    console.log("hello !st time huh.... :p");
+(function() {
 
     // get these values from the chrome storage..if present 
     // otherwise these are the default values
@@ -16,32 +8,42 @@ if (document.querySelector("#activate-ext")) {
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
-    chrome.storage.sync.get(['settingsInfo'], function(data) {
-        // check if data exists.
-        if (data.settingsInfo) {
-            console.log(data);
-            labelColor = data.settingsInfo.lc;
-            timeStampColor = data.settingsInfo.tsc;
-            console.log(labelColor, timeStampColor);
+
+    if (document.querySelector("#activate-ext")) {
+        // the extension was loaded previously and is still active
+        // no need to build new UI... just remove the previous UI
+        if (document.querySelector("#my-container")) {
+            document.querySelector("#my-container").remove();
         }
-    });
+
+    } else {
+        console.log("hello !st time huh.... :p");
+        chrome.storage.sync.get(['settingsInfo'], function(data) {
+            // check if data exists.
+            if (data.settingsInfo) {
+                console.log(data);
+                labelColor = data.settingsInfo.lc;
+                timeStampColor = data.settingsInfo.tsc;
+                console.log(labelColor, timeStampColor);
+            }
+        });
 
 
-    setTimeout(() => {
-        // create activate button
-        holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
-        console.log(holder.offsetHeight);
-        // add a button to the screen
-        // clicking on that would open the timestamp UI 
-        let activateButton = document.createElement("div");
-        activateButton.id = "activate-ext";
-        activateButton.addEventListener("click", getData);
-        holder.appendChild(activateButton);
         setTimeout(() => {
-            createSettingsMenu()
-        }, 0);
-    }, 3 * 1000);
+            // create activate button
+            holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
+            console.log(holder.offsetHeight);
+            // add a button to the screen
+            // clicking on that would open the timestamp UI 
+            let activateButton = document.createElement("div");
+            activateButton.id = "activate-ext";
+            activateButton.addEventListener("click", getData);
+            holder.appendChild(activateButton);
 
+            createSettingsMenu()
+        }, 3 * 1000);
+
+    }
 
     function createSettingsMenu() {
         ////////////////////////////////////////////// 
@@ -53,23 +55,22 @@ if (document.querySelector("#activate-ext")) {
         // later generate this using shadow dom...
         // and add textarea for user input too.....    
         TAsettingsMenu.innerHTML = `
-        <button class="ts-collapsible">Open Collapsible</button>
-        <div class="ts-settings-content"> 
-            <div>
-                <input type="color" id="ts-label-bg" name="label"
-                    value="#e66465">
-                <label for="ts-label-bg">LABEL</label>
-            </div>
+            <button class="ts-collapsible">Open Collapsible</button>
+            <div class="ts-settings-content"> 
+                <div>
+                    <input type="color" id="ts-label-bg" name="label"
+                        value="#e66465">
+                    <label for="ts-label-bg">LABEL</label>
+                </div>
 
-            <div>
-                <input type="color" id="ts-tsui-color" name="tsUI"
-                        value="#f6b73c">
-                <label for="ts-tsui-color">TimeStampUI</label>
-            </div>
+                <div>
+                    <input type="color" id="ts-tsui-color" name="tsUI"
+                            value="#f6b73c">
+                    <label for="ts-tsui-color">TimeStampUI</label>
+                </div>
 
-            <button id="ts-submitBtn-setting">SUBMIT</button>
-        </div>
-    `;
+                <button id="ts-submitBtn-setting">SUBMIT</button>
+            </div> `;
 
         let videoMetaInfo = document.getElementById("meta");
         videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
@@ -132,6 +133,7 @@ if (document.querySelector("#activate-ext")) {
             labelIndex = 3;
         }
 
+
         // generate arrays
         while (match) {
             timeStamps.push(timeToHHMMSS(match[timeIndex]));
@@ -152,8 +154,6 @@ if (document.querySelector("#activate-ext")) {
         setTimeout(() => {
             generateUI(labels, timeRatios, timeStampsInSeconds);
         }, 0);
-
-
     }
 
     function timeToHHMMSS(time) {
@@ -310,4 +310,4 @@ if (document.querySelector("#activate-ext")) {
         return seconds
     }
 
-}
+})();
