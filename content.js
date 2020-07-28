@@ -12,7 +12,7 @@ if (document.querySelector("#activate-ext")) {
     // otherwise these are the default values
     let labelColor = "blue";
     let timeStampColor = "#FF7F50";
-
+    let holder;
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
@@ -26,17 +26,21 @@ if (document.querySelector("#activate-ext")) {
         }
     });
 
-    // create activate button
-    let holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
-    console.log(holder.offsetHeight);
-    // add a button to the screen
-    // clicking on that would open the timestamp UI 
-    let activateButton = document.createElement("div");
-    activateButton.id = "activate-ext";
-    activateButton.addEventListener("click", getData);
-    holder.appendChild(activateButton);
 
-    createSettingsMenu()
+    setTimeout(() => {
+        // create activate button
+        holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
+        console.log(holder.offsetHeight);
+        // add a button to the screen
+        // clicking on that would open the timestamp UI 
+        let activateButton = document.createElement("div");
+        activateButton.id = "activate-ext";
+        activateButton.addEventListener("click", getData);
+        holder.appendChild(activateButton);
+        setTimeout(() => {
+            createSettingsMenu()
+        }, 0);
+    }, 3 * 1000);
 
 
     function createSettingsMenu() {
