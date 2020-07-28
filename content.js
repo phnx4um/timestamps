@@ -18,7 +18,7 @@ if (document.querySelector("#activate-ext")) {
 
     chrome.storage.sync.get(['settingsInfo'], function(data) {
         // check if data exists.
-        if (data) {
+        if (data.settingsInfo) {
             console.log(data);
             labelColor = data.settingsInfo.lc;
             timeStampColor = data.settingsInfo.tsc;
@@ -141,7 +141,10 @@ if (document.querySelector("#activate-ext")) {
         let timeStampsInSeconds = values.timeStampsInSeconds;
         let timeRatios = values.timeStampRatios;
 
-        generateUI(labels, timeRatios, timeStampsInSeconds);
+        setTimeout(() => {
+            generateUI(labels, timeRatios, timeStampsInSeconds);
+        }, 0);
+
 
     }
 
@@ -247,14 +250,17 @@ if (document.querySelector("#activate-ext")) {
             timeStampContainer.style.visibility = "visible";
             labelContainer.style.visibility = "visible";
 
+        });
+
+        // hide the container again when mouse leaves
+        divContainer.addEventListener("mouseleave", e => {
             // reset visibility to hidden
             setTimeout(function() {
-                // divContainer.style.visibility = "hidden";
                 timeStampContainer.style.visibility = "hidden";
                 labelContainer.style.visibility = "hidden";
             }, 2000);
 
-        });
+        })
 
 
         labels.forEach((label, index) => {
