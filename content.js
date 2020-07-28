@@ -26,9 +26,9 @@ if (document.querySelector("#activate-ext")) {
         }
     });
 
+    // create activate button
     let holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
     console.log(holder.offsetHeight);
-
     // add a button to the screen
     // clicking on that would open the timestamp UI 
     let activateButton = document.createElement("div");
@@ -36,16 +36,19 @@ if (document.querySelector("#activate-ext")) {
     activateButton.addEventListener("click", getData);
     holder.appendChild(activateButton);
 
+    createSettingsMenu()
 
-    ////////////////////////////////////////////// 
-    // SETTINGS MENU CODE 
-    //////////////////////////////////////////////
-    TAsettingsMenu = document.createElement("div");
-    TAsettingsMenu.id = "ts-taSettings";
 
-    // later generate this using shadow dom...
-    // and add textarea for user input too.....    
-    TAsettingsMenu.innerHTML = `
+    function createSettingsMenu() {
+        ////////////////////////////////////////////// 
+        // SETTINGS MENU CODE 
+        //////////////////////////////////////////////
+        TAsettingsMenu = document.createElement("div");
+        TAsettingsMenu.id = "ts-taSettings";
+
+        // later generate this using shadow dom...
+        // and add textarea for user input too.....    
+        TAsettingsMenu.innerHTML = `
         <button class="ts-collapsible">Open Collapsible</button>
         <div class="ts-settings-content"> 
             <div>
@@ -64,37 +67,38 @@ if (document.querySelector("#activate-ext")) {
         </div>
     `;
 
-    let videoMetaInfo = document.getElementById("meta");
-    videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
+        let videoMetaInfo = document.getElementById("meta");
+        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
 
-    let coll = document.getElementsByClassName("ts-collapsible")[0];
-    console.log(coll);
-    coll.addEventListener("click", function() {
-        this.classList.toggle("ts-active");
-        var content = this.nextElementSibling;
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-        } else {
-            content.style.maxHeight = "200px";
-        }
-    });
-
-    let settingsButton = document.querySelector("#ts-submitBtn-setting");
-    settingsButton.addEventListener("click", event => {
-        let labelColor = document.querySelector("#ts-label-bg").value;
-        let tsUIColor = document.querySelector("#ts-tsui-color").value;
-        console.log(labelColor);
-        let info = {
-            lc: labelColor,
-            tsc: tsUIColor
-        };
-        // Save it using the Chrome extension storage API.
-        chrome.storage.sync.set({ 'settingsInfo': info }, function() {
-            // Notify that we saved.
-            console.log('Settings saved');
+        let coll = document.getElementsByClassName("ts-collapsible")[0];
+        console.log(coll);
+        coll.addEventListener("click", function() {
+            this.classList.toggle("ts-active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = "200px";
+            }
         });
-    });
 
+        let settingsButton = document.querySelector("#ts-submitBtn-setting");
+        settingsButton.addEventListener("click", event => {
+            let labelColor = document.querySelector("#ts-label-bg").value;
+            let tsUIColor = document.querySelector("#ts-tsui-color").value;
+            console.log(labelColor);
+            let info = {
+                lc: labelColor,
+                tsc: tsUIColor
+            };
+            // Save it using the Chrome extension storage API.
+            chrome.storage.sync.set({ 'settingsInfo': info }, function() {
+                // Notify that we saved.
+                console.log('Settings saved');
+            });
+        });
+
+    }
 
     function getData() {
         // get data from description
