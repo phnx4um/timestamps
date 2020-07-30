@@ -21,12 +21,11 @@
         "run_at": "document_end"
     }],
     "background": {
-        "scripts": [
-            "background.js"
-        ]
+        "page": "background.html"
     },
     "browser_action": {
         "default_popup": "index.html",
         "default_title": "A tooltip popup description when you hover over the Chrome Extension icon."
-    }
+    },
+    "content_security_policy": "script-src 'self' https://www.gstatic.com/ https://*.firebaseio.com https://www.googleapis.com; object-src 'self'"
 }

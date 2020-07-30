@@ -40,8 +40,8 @@
             activateButton.addEventListener("click", getData);
             holder.appendChild(activateButton);
 
-            createSettingsMenu()
-        }, 3 * 1000);
+            // createSettingsMenu()
+        }, 5 * 1000);
 
     }
 
