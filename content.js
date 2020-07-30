@@ -9,6 +9,12 @@
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
 
+    chrome.runtime.onMessage.addListener(
+        function(request, sender, sendResponse) {
+            console.log(request);
+        }
+    );
+
     if (document.querySelector("#activate-ext")) {
         // the extension was loaded previously and is still active
         // no need to build new UI... just remove the previous UI
@@ -266,7 +272,7 @@
             setTimeout(function() {
                 timeStampContainer.style.visibility = "hidden";
                 labelContainer.style.visibility = "hidden";
-            }, 2000);
+            }, 0.5 * 1000);
 
         })
 
