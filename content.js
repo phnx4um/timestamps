@@ -4,14 +4,23 @@
     // otherwise these are the default values
     let labelColor = "blue";
     let timeStampColor = "#FF7F50";
+    let isPresentInDB = false;
+    let videoInfo;
+
     let holder;
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
-
+    console.log(`ispresentDB ${isPresentInDB}`)
     chrome.runtime.onMessage.addListener(
         function(request, sender, sendResponse) {
             console.log(request);
+            // check what the firebase sends if data is not found
+            if (request) {
+                isPresentInDB = true;
+                console.log(`ispresentDB in eventlistener ${isPresentInDB}`)
+                videoInfo = request;
+            }
         }
     );
 
@@ -43,7 +52,7 @@
             // clicking on that would open the timestamp UI 
             let activateButton = document.createElement("div");
             activateButton.id = "activate-ext";
-            activateButton.addEventListener("click", getData);
+            activateButton.addEventListener("click", displayUI);
             holder.appendChild(activateButton);
 
             // createSettingsMenu()
@@ -111,6 +120,19 @@
 
     }
 
+    function displayUI() {
+        if (isPresentInDB) {
+            // present in database
+            // directly generate UI
+            generateUI(videoInfo["labels"], videoInfo["time-ratios"], videoInfo["time-stamps"])
+        } else {
+            // get data from the description
+            // and then generate UI
+            getData()
+        }
+    }
+
+
     function getData() {
         // get data from description
         let description = document.querySelector("#description").textContent;
@@ -121,6 +143,12 @@
         let match = regex.exec(description);
         // console.log(match);
         if (match === null) {
+
+            // TODO //////////////////////////////////////////////
+            // no data found
+            // dislay a message requesting to generate time-stamps
+            //////////////////////////////////////////////////////
+
             console.log("Sorry No timestamps found");
             return 0;
         }
