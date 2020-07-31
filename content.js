@@ -56,10 +56,79 @@
             holder.appendChild(activateButton);
 
             // createSettingsMenu()
+            generateSettingsMenu();
         }, 5 * 1000);
+    }
+
+    function generateSettingsMenu() {
+
+        let TAsettingsMenu = document.createElement("div");
+        TAsettingsMenu.id = "ts-taSettings";
+
+        let styleContainer = document.createElement("div");
+        styleContainer.id = "ts-styleContainer"
+
+        let styleContainerHeading = document.createElement("div");
+        styleContainerHeading.id = "ts-styleHeading"
+        styleContainerHeading.innerText = "STYLE";
+
+        let labelColorContainer = document.createElement("div");
+        labelColorContainer.id = "ts-lcc";
+        let labelName = document.createElement("div");
+        labelName.innerText = "label";
+        let labelInput = document.createElement("INPUT");
+        labelInput.setAttribute("type", "color");
+        labelInput.setAttribute("value", "#e66465");
+        labelInput.id = "ts-label-bg";
+        labelColorContainer.appendChild(labelName)
+        labelColorContainer.appendChild(labelInput);
+
+        let TSColorContainer = document.createElement("div");
+        TSColorContainer.id = "ts-tscc";
+        let TSName = document.createElement("div");
+        TSName.innerText = "timestamp UI";
+        let TSInput = document.createElement("INPUT");
+        TSInput.setAttribute("type", "color");
+        TSInput.setAttribute("value", "#e66465");
+        TSInput.id = "ts-tsui-color";
+        TSColorContainer.appendChild(TSName);
+        TSColorContainer.appendChild(TSInput);
+
+        let colorContainer = document.createElement("div");
+        colorContainer.id = "ts-cc";
+        colorContainer.appendChild(TSColorContainer);
+        colorContainer.appendChild(labelColorContainer);
+
+        styleContainer.appendChild(colorContainer);
+
+        TAsettingsMenu.appendChild(styleContainerHeading);
+        TAsettingsMenu.appendChild(styleContainer);
+
+        // get element from UI
+        let videoMetaInfo = document.getElementById("meta");
+        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
+
+        // TODO 
+        // add button
+        let settingsButton = document.querySelector("#ts-submitBtn-setting");
+        settingsButton.addEventListener("click", event => {
+            let labelColor = document.querySelector("#ts-label-bg").value;
+            let tsUIColor = document.querySelector("#ts-tsui-color").value;
+            console.log(labelColor);
+            let info = {
+                lc: labelColor,
+                tsc: tsUIColor
+            };
+            // Save it using the Chrome extension storage API.
+            chrome.storage.sync.set({ 'settingsInfo': info }, function() {
+                // Notify that we saved.
+                console.log('Settings saved');
+            });
+        });
 
     }
 
+    // not using this one currently
     function createSettingsMenu() {
         ////////////////////////////////////////////// 
         // SETTINGS MENU CODE 
@@ -117,7 +186,6 @@
                 console.log('Settings saved');
             });
         });
-
     }
 
     function displayUI() {
