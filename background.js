@@ -1,4 +1,4 @@
-// TODO: Replace the following with your app's Firebase project configuration
+// regex for youtube watch page
 const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
 
 
@@ -23,12 +23,13 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
     console.log(details);
     // match if its youtube watch page
     if ((details.url).match(regWatch)) {
+        let videoID;
         console.log(details.url);
         chrome.tabs.executeScript(null, { file: "content.js" });
-        // get the ID of the video from URL and check if there is an entry for that video
 
-        // USING DUMMY DATA FOR NOW:
-        let videoID = "S07vxvKvk40";
+        videoID = getID(details.url);
+        console.log(videoID);
+
         let key = "videos/" + videoID;
         console.log(key);
 
@@ -47,7 +48,6 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
                 console.log(e);
             });
 
-
     } else {
         // any other website except youtube or
         // any other youtube page except the one with watch in the URL
@@ -55,3 +55,14 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
     }
 
 });
+
+
+function getID(url) {
+    // get videoID from the URL
+    var video_id = url.split('v=')[1];
+    var ampersandPosition = video_id.indexOf('&');
+    if (ampersandPosition != -1) {
+        video_id = video_id.substring(0, ampersandPosition);
+    }
+    return video_id;
+}

@@ -11,14 +11,14 @@
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
-    console.log(`ispresentDB ${isPresentInDB}`)
+    console.log(`ispresentDB ${isPresentInDB}`);
     chrome.runtime.onMessage.addListener(
         function(request, sender, sendResponse) {
             console.log(request);
             // check what the firebase sends if data is not found
             if (request) {
                 isPresentInDB = true;
-                console.log(`ispresentDB in eventlistener ${isPresentInDB}`)
+                console.log(`ispresentDB in eventlistener ${isPresentInDB}`);
                 videoInfo = request;
             }
         }
@@ -56,147 +56,19 @@
             holder.appendChild(activateButton);
 
             // createSettingsMenu()
-            generateSettingsMenu();
+            // generateSettingsMenu();
         }, 5 * 1000);
-    }
-
-    function generateSettingsMenu() {
-
-        let TAsettingsMenu = document.createElement("div");
-        TAsettingsMenu.id = "ts-taSettings";
-
-        let styleContainer = document.createElement("div");
-        styleContainer.id = "ts-styleContainer"
-
-        let styleContainerHeading = document.createElement("div");
-        styleContainerHeading.id = "ts-styleHeading"
-        styleContainerHeading.innerText = "STYLE";
-
-        let labelColorContainer = document.createElement("div");
-        labelColorContainer.id = "ts-lcc";
-        let labelName = document.createElement("div");
-        labelName.innerText = "label";
-        let labelInput = document.createElement("INPUT");
-        labelInput.setAttribute("type", "color");
-        labelInput.setAttribute("value", "#e66465");
-        labelInput.id = "ts-label-bg";
-        labelColorContainer.appendChild(labelName)
-        labelColorContainer.appendChild(labelInput);
-
-        let TSColorContainer = document.createElement("div");
-        TSColorContainer.id = "ts-tscc";
-        let TSName = document.createElement("div");
-        TSName.innerText = "timestamp UI";
-        let TSInput = document.createElement("INPUT");
-        TSInput.setAttribute("type", "color");
-        TSInput.setAttribute("value", "#e66465");
-        TSInput.id = "ts-tsui-color";
-        TSColorContainer.appendChild(TSName);
-        TSColorContainer.appendChild(TSInput);
-
-        let colorContainer = document.createElement("div");
-        colorContainer.id = "ts-cc";
-        colorContainer.appendChild(TSColorContainer);
-        colorContainer.appendChild(labelColorContainer);
-
-        styleContainer.appendChild(colorContainer);
-
-        TAsettingsMenu.appendChild(styleContainerHeading);
-        TAsettingsMenu.appendChild(styleContainer);
-
-        // get element from UI
-        let videoMetaInfo = document.getElementById("meta");
-        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
-
-        // TODO 
-        // add button
-        let settingsButton = document.querySelector("#ts-submitBtn-setting");
-        settingsButton.addEventListener("click", event => {
-            let labelColor = document.querySelector("#ts-label-bg").value;
-            let tsUIColor = document.querySelector("#ts-tsui-color").value;
-            console.log(labelColor);
-            let info = {
-                lc: labelColor,
-                tsc: tsUIColor
-            };
-            // Save it using the Chrome extension storage API.
-            chrome.storage.sync.set({ 'settingsInfo': info }, function() {
-                // Notify that we saved.
-                console.log('Settings saved');
-            });
-        });
-
-    }
-
-    // not using this one currently
-    function createSettingsMenu() {
-        ////////////////////////////////////////////// 
-        // SETTINGS MENU CODE 
-        //////////////////////////////////////////////
-        TAsettingsMenu = document.createElement("div");
-        TAsettingsMenu.id = "ts-taSettings";
-
-        // later generate this using shadow dom...
-        // and add textarea for user input too.....    
-        TAsettingsMenu.innerHTML = `
-            <button class="ts-collapsible">Open Collapsible</button>
-            <div class="ts-settings-content"> 
-                <div>
-                    <input type="color" id="ts-label-bg" name="label"
-                        value="#e66465">
-                    <label for="ts-label-bg">LABEL</label>
-                </div>
-
-                <div>
-                    <input type="color" id="ts-tsui-color" name="tsUI"
-                            value="#f6b73c">
-                    <label for="ts-tsui-color">TimeStampUI</label>
-                </div>
-
-                <button id="ts-submitBtn-setting">SUBMIT</button>
-            </div> `;
-
-        let videoMetaInfo = document.getElementById("meta");
-        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
-
-        let coll = document.getElementsByClassName("ts-collapsible")[0];
-        console.log(coll);
-        coll.addEventListener("click", function() {
-            this.classList.toggle("ts-active");
-            var content = this.nextElementSibling;
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-            } else {
-                content.style.maxHeight = "200px";
-            }
-        });
-
-        let settingsButton = document.querySelector("#ts-submitBtn-setting");
-        settingsButton.addEventListener("click", event => {
-            let labelColor = document.querySelector("#ts-label-bg").value;
-            let tsUIColor = document.querySelector("#ts-tsui-color").value;
-            console.log(labelColor);
-            let info = {
-                lc: labelColor,
-                tsc: tsUIColor
-            };
-            // Save it using the Chrome extension storage API.
-            chrome.storage.sync.set({ 'settingsInfo': info }, function() {
-                // Notify that we saved.
-                console.log('Settings saved');
-            });
-        });
     }
 
     function displayUI() {
         if (isPresentInDB) {
             // present in database
             // directly generate UI
-            generateUI(videoInfo["labels"], videoInfo["time-ratios"], videoInfo["time-stamps"])
+            generateUI(videoInfo["labels"], videoInfo["time-ratios"], videoInfo["time-stamps"]);
         } else {
             // get data from the description
             // and then generate UI
-            getData()
+            getData();
         }
     }
 
@@ -218,6 +90,7 @@
             //////////////////////////////////////////////////////
 
             console.log("Sorry No timestamps found");
+            displayNotFoundMessage();
             return 0;
         }
 
@@ -368,7 +241,7 @@
             setTimeout(function() {
                 timeStampContainer.style.visibility = "hidden";
                 labelContainer.style.visibility = "hidden";
-            }, 0.5 * 1000);
+            }, 0.2 * 1000);
 
         })
 
@@ -397,6 +270,48 @@
 
     }
 
+    function getTimeInSeconds(time) {
+        var a = time.split(':');
+        var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
+        return seconds
+    }
+
+    function displayNotFoundMessage() {
+        let container = document.createElement("div");
+        container.id = "ts-nfm-c";
+        container.className = "ts-nfm-text"
+
+        // main message
+        let message = document.createElement("div");
+        message.innerHTML = "<span>NO TIMESTAMPS FOUND</span>";
+        message.id = "ts-nfm-mc";
+
+        // secondary message
+        let addMessage = document.createElement("div");
+        addMessage.id = "ts-nfc-amc"
+        addMessage.innerHTML = "want to help";
+
+        //button
+        // TODO: add code to allow to submit timestamps
+        let button = document.createElement("button");
+        button.innerHTML = "SURE"
+
+        //div to remove this popup
+        let removeDiv = document.createElement("div");
+        removeDiv.id = "ts-nfm-rc"
+        removeDiv.innerHTML = "close";
+        removeDiv.addEventListener("click", e => {
+            e.target.parentNode.remove();
+        });
+
+        container.appendChild(message);
+        container.appendChild(addMessage);
+        container.appendChild(button);
+        container.appendChild(removeDiv);
+
+        holder.appendChild(container);
+    }
+
     function random_bg_color() {
         var x = Math.floor(Math.random() * 256);
         var y = Math.floor(Math.random() * 256);
@@ -406,10 +321,131 @@
         return bgColor
     }
 
-    function getTimeInSeconds(time) {
-        var a = time.split(':');
-        var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
-        return seconds
+    function generateSettingsMenu() {
+
+        let TAsettingsMenu = document.createElement("div");
+        TAsettingsMenu.id = "ts-taSettings";
+
+        let styleContainer = document.createElement("div");
+        styleContainer.id = "ts-styleContainer"
+
+        let styleContainerHeading = document.createElement("div");
+        styleContainerHeading.id = "ts-styleHeading"
+        styleContainerHeading.innerText = "STYLE";
+
+        let labelColorContainer = document.createElement("div");
+        labelColorContainer.id = "ts-lcc";
+        let labelName = document.createElement("div");
+        labelName.innerText = "label";
+        let labelInput = document.createElement("INPUT");
+        labelInput.setAttribute("type", "color");
+        labelInput.setAttribute("value", "#e66465");
+        labelInput.id = "ts-label-bg";
+        labelColorContainer.appendChild(labelName)
+        labelColorContainer.appendChild(labelInput);
+
+        let TSColorContainer = document.createElement("div");
+        TSColorContainer.id = "ts-tscc";
+        let TSName = document.createElement("div");
+        TSName.innerText = "timestamp UI";
+        let TSInput = document.createElement("INPUT");
+        TSInput.setAttribute("type", "color");
+        TSInput.setAttribute("value", "#e66465");
+        TSInput.id = "ts-tsui-color";
+        TSColorContainer.appendChild(TSName);
+        TSColorContainer.appendChild(TSInput);
+
+        let colorContainer = document.createElement("div");
+        colorContainer.id = "ts-cc";
+        colorContainer.appendChild(TSColorContainer);
+        colorContainer.appendChild(labelColorContainer);
+
+        styleContainer.appendChild(colorContainer);
+
+        TAsettingsMenu.appendChild(styleContainerHeading);
+        TAsettingsMenu.appendChild(styleContainer);
+
+        // TODO 
+        // add button
+        let settingsButton = document.querySelector("#ts-submitBtn-setting");
+        settingsButton.addEventListener("click", event => {
+            let labelColor = document.querySelector("#ts-label-bg").value;
+            let tsUIColor = document.querySelector("#ts-tsui-color").value;
+            console.log(labelColor);
+            let info = {
+                lc: labelColor,
+                tsc: tsUIColor
+            };
+            // Save it using the Chrome extension storage API.
+            chrome.storage.sync.set({ 'settingsInfo': info }, function() {
+                // Notify that we saved.
+                console.log('Settings saved');
+            });
+        });
+
+        // get element from UI
+        let videoMetaInfo = document.getElementById("meta");
+        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
+    }
+
+    // not using this one currently
+    function createSettingsMenu() {
+        ////////////////////////////////////////////// 
+        // SETTINGS MENU CODE 
+        //////////////////////////////////////////////
+        TAsettingsMenu = document.createElement("div");
+        TAsettingsMenu.id = "ts-taSettings";
+
+        // later generate this using shadow dom...
+        // and add textarea for user input too.....    
+        TAsettingsMenu.innerHTML = `
+            <button class="ts-collapsible">Open Collapsible</button>
+            <div class="ts-settings-content"> 
+                <div>
+                    <input type="color" id="ts-label-bg" name="label"
+                        value="#e66465">
+                    <label for="ts-label-bg">LABEL</label>
+                </div>
+
+                <div>
+                    <input type="color" id="ts-tsui-color" name="tsUI"
+                            value="#f6b73c">
+                    <label for="ts-tsui-color">TimeStampUI</label>
+                </div>
+
+                <button id="ts-submitBtn-setting">SUBMIT</button>
+            </div> `;
+
+        let videoMetaInfo = document.getElementById("meta");
+        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
+
+        let coll = document.getElementsByClassName("ts-collapsible")[0];
+        console.log(coll);
+        coll.addEventListener("click", function() {
+            this.classList.toggle("ts-active");
+            var content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = "200px";
+            }
+        });
+
+        let settingsButton = document.querySelector("#ts-submitBtn-setting");
+        settingsButton.addEventListener("click", event => {
+            let labelColor = document.querySelector("#ts-label-bg").value;
+            let tsUIColor = document.querySelector("#ts-tsui-color").value;
+            console.log(labelColor);
+            let info = {
+                lc: labelColor,
+                tsc: tsUIColor
+            };
+            // Save it using the Chrome extension storage API.
+            chrome.storage.sync.set({ 'settingsInfo': info }, function() {
+                // Notify that we saved.
+                console.log('Settings saved');
+            });
+        });
     }
 
 })();
