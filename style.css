@@ -1,10 +1,7 @@
-/* style for settings menu starts here */
+/* ============= style for settings menu starts here ===============*/
 
 
-/* #ts-taSettings {
-    margin-top: 20px;
-}
-
+/* 
 .ts-collapsible {
     background-color: #777;
     color: white;
@@ -31,22 +28,26 @@
 } */
 
 #ts-taSettings {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 4fr;
-    grid-template-areas: "style-heading" "style";
-    background-color: aliceblue;
-    height: 150px;
-    width: 100%;
-    padding-left: 20px;
-    margin-top: 10px;
+    background-color: azure;
+    height: 400px;
+    width: 600px;
+    padding: 50px;
+    border-radius: 15px;
+    opacity: 0.8;
 }
 
 #ts-styleContainer {
-    grid-area: "style";
-    /* background-color: rgb(186, 198, 161); */
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+}
+
+#ts-styleItemContainer {
+    /* background-color: aliceblue; */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+    grid-gap: 3px;
+    height: 150px;
 }
 
 #ts-styleHeading {
@@ -56,16 +57,27 @@
     font-weight: lighter;
     font-size: 20px;
     font-style: italic;
+    padding: 10px;
+    padding-bottom: 20px;
 }
 
 #ts-cc {
     display: flex;
     flex-direction: column;
-    padding-top: 20px;
+    padding: 10px;
     text-transform: uppercase;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 12px;
+    font-size: 9px;
     letter-spacing: 2px;
+    /* background-color: beige; */
+}
+
+#ts-cch {
+    color: palevioletred;
+    text-transform: none;
+    font-style: italic;
+    padding-bottom: 20px;
+    font-size: 14px;
 }
 
 #ts-lcc {
@@ -76,7 +88,7 @@
 #ts-tscc {
     display: flex;
     flex-direction: column;
-    padding-bottom: 7px;
+    padding-bottom: 5px;
 }
 
 input[type="color"] {
@@ -84,6 +96,8 @@ input[type="color"] {
     border: none;
     width: 20px;
     height: 20px;
+    padding: 0;
+    padding-top: 2px;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper {
@@ -95,7 +109,63 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 
-/* style for settings menu ends here */
+/* divider */
+
+.ts-set-divider {
+    height: 0.1px;
+    opacity: 0.2;
+    width: 100%;
+    /* border: none; */
+    background-color: green;
+    margin-bottom: 35px;
+}
+
+
+/* buttons */
+
+#ts-set-bc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#ts-set-bc>button {
+    line-height: 40px;
+    font-weight: lighter;
+    font-style: italic;
+    padding: 0 40px;
+    background: palevioletred;
+    border-radius: 3px;
+    border: none;
+    color: white;
+    opacity: 0.8;
+}
+
+#ts-set-bc>button:hover {
+    /* background: lightgreen; */
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+#ts-set-close {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    background-color: #323232;
+    opacity: 0.3;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ts-set-close:hover {
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+
+/* ==============style for settings menu ends here================ */
 
 #activate-ext {
     position: absolute;
@@ -175,7 +245,7 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 
-/* timestams not found message(ts-nfm) container styling */
+/* ==============timestams not found message(ts-nfm) container styling============== */
 
 
 /* associated funtion: displayNotFoundMessage() */
@@ -249,4 +319,4 @@ input[type="color"]::-webkit-color-swatch {
 }
 
 
-/* ends here */
+/*==================== ends here =====================*/

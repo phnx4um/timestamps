@@ -354,18 +354,46 @@
         console.log(bgColor);
         return bgColor
     }
-
+    // generate this when settings button is clicked
     function generateSettingsMenu() {
+
+        ////////////////////////////////////////////// 
+        // SETTINGS MENU CODE 
+        //////////////////////////////////////////////
 
         let TAsettingsMenu = document.createElement("div");
         TAsettingsMenu.id = "ts-taSettings";
 
         let styleContainer = document.createElement("div");
-        styleContainer.id = "ts-styleContainer"
+        styleContainer.id = "ts-styleContainer";
 
         let styleContainerHeading = document.createElement("div");
-        styleContainerHeading.id = "ts-styleHeading"
+        styleContainerHeading.id = "ts-styleHeading";
+        styleContainerHeading.className = "ts-collapsible";
         styleContainerHeading.innerText = "STYLE";
+
+        let styleItemContainer = document.createElement("div");
+        styleItemContainer.id = "ts-styleItemContainer"
+        styleItemContainer.className = "ts-settings-content";
+
+
+        let colorContainer = document.createElement("div");
+        colorContainer.id = "ts-cc";
+
+        let colorContainerHeading = document.createElement("div");
+        colorContainerHeading.innerText = 'colors';
+        colorContainerHeading.id = "ts-cch"
+
+        let TSColorContainer = document.createElement("div");
+        TSColorContainer.id = "ts-tscc";
+        let TSName = document.createElement("div");
+        TSName.innerText = "time bar";
+        let TSInput = document.createElement("INPUT");
+        TSInput.setAttribute("type", "color");
+        TSInput.setAttribute("value", "#e66465");
+        TSInput.id = "ts-tsui-color";
+        TSColorContainer.appendChild(TSName);
+        TSColorContainer.appendChild(TSInput);
 
         let labelColorContainer = document.createElement("div");
         labelColorContainer.id = "ts-lcc";
@@ -378,31 +406,26 @@
         labelColorContainer.appendChild(labelName)
         labelColorContainer.appendChild(labelInput);
 
-        let TSColorContainer = document.createElement("div");
-        TSColorContainer.id = "ts-tscc";
-        let TSName = document.createElement("div");
-        TSName.innerText = "timestamp UI";
-        let TSInput = document.createElement("INPUT");
-        TSInput.setAttribute("type", "color");
-        TSInput.setAttribute("value", "#e66465");
-        TSInput.id = "ts-tsui-color";
-        TSColorContainer.appendChild(TSName);
-        TSColorContainer.appendChild(TSInput);
-
-        let colorContainer = document.createElement("div");
-        colorContainer.id = "ts-cc";
+        colorContainer.appendChild(colorContainerHeading);
         colorContainer.appendChild(TSColorContainer);
         colorContainer.appendChild(labelColorContainer);
 
-        styleContainer.appendChild(colorContainer);
+        styleItemContainer.appendChild(colorContainer);
 
-        TAsettingsMenu.appendChild(styleContainerHeading);
-        TAsettingsMenu.appendChild(styleContainer);
+        styleContainer.appendChild(styleContainerHeading);
+        styleContainer.appendChild(styleItemContainer);
 
-        // TODO 
-        // add button
-        let settingsButton = document.querySelector("#ts-submitBtn-setting");
-        settingsButton.addEventListener("click", event => {
+        // divider
+        let hr1 = document.createElement("hr");
+        hr1.className = "ts-set-divider";
+
+        // save button and close 
+        let buttonContainer = document.createElement("div");
+        buttonContainer.id = "ts-set-bc";
+
+        let saveSettingBtn = document.createElement("button");
+        saveSettingBtn.innerText = "SAVE"
+        saveSettingBtn.addEventListener("click", event => {
             let labelColor = document.querySelector("#ts-label-bg").value;
             let tsUIColor = document.querySelector("#ts-tsui-color").value;
             console.log(labelColor);
@@ -416,70 +439,22 @@
                 console.log('Settings saved');
             });
         });
+
+        let closeButton = document.createElement("div");
+        closeButton.id = "ts-set-close";
+        closeButton.innerText = "\u2715"
+
+        buttonContainer.appendChild(saveSettingBtn);
+        buttonContainer.appendChild(closeButton);
+
+        TAsettingsMenu.appendChild(styleContainer);
+        TAsettingsMenu.appendChild(hr1);
+        TAsettingsMenu.appendChild(buttonContainer);
+
 
         // get element from UI
-        let videoMetaInfo = document.getElementById("meta");
-        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
-    }
-
-    // not using this one currently
-    function createSettingsMenu() {
-        ////////////////////////////////////////////// 
-        // SETTINGS MENU CODE 
-        //////////////////////////////////////////////
-        TAsettingsMenu = document.createElement("div");
-        TAsettingsMenu.id = "ts-taSettings";
-
-        // later generate this using shadow dom...
-        // and add textarea for user input too.....    
-        TAsettingsMenu.innerHTML = `
-            <button class="ts-collapsible">Open Collapsible</button>
-            <div class="ts-settings-content"> 
-                <div>
-                    <input type="color" id="ts-label-bg" name="label"
-                        value="#e66465">
-                    <label for="ts-label-bg">LABEL</label>
-                </div>
-
-                <div>
-                    <input type="color" id="ts-tsui-color" name="tsUI"
-                            value="#f6b73c">
-                    <label for="ts-tsui-color">TimeStampUI</label>
-                </div>
-
-                <button id="ts-submitBtn-setting">SUBMIT</button>
-            </div> `;
-
-        let videoMetaInfo = document.getElementById("meta");
-        videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
-
-        let coll = document.getElementsByClassName("ts-collapsible")[0];
-        console.log(coll);
-        coll.addEventListener("click", function() {
-            this.classList.toggle("ts-active");
-            var content = this.nextElementSibling;
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-            } else {
-                content.style.maxHeight = "200px";
-            }
-        });
-
-        let settingsButton = document.querySelector("#ts-submitBtn-setting");
-        settingsButton.addEventListener("click", event => {
-            let labelColor = document.querySelector("#ts-label-bg").value;
-            let tsUIColor = document.querySelector("#ts-tsui-color").value;
-            console.log(labelColor);
-            let info = {
-                lc: labelColor,
-                tsc: tsUIColor
-            };
-            // Save it using the Chrome extension storage API.
-            chrome.storage.sync.set({ 'settingsInfo': info }, function() {
-                // Notify that we saved.
-                console.log('Settings saved');
-            });
-        });
+        // let videoMetaInfo = document.getElementById("meta");
+        // videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
     }
 
 })();
