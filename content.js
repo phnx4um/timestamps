@@ -6,6 +6,7 @@
     let timeStampColor = "#FF7F50";
     let isPresentInDB = false;
     let videoInfo;
+    let simpleUI = false;
     const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
 
 
@@ -14,8 +15,6 @@
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
     if (!((location.href).match(regWatch))) return;
-
-    console.log("hello");
 
     console.log(`ispresentDB ${isPresentInDB}`);
     chrome.runtime.onMessage.addListener(
@@ -243,8 +242,11 @@
                     document.getElementById(labeltextid).style.backgroundColor = labelColor;
                     break;
                 }
-                let tsid = "ts" + i.toString();
-                document.getElementById(tsid).style.backgroundColor = timeStampColor;
+                if (!simpleUI) {
+                    let tsid = "ts" + i.toString();
+                    document.getElementById(tsid).style.backgroundColor = timeStampColor;
+                }
+
             }
 
             // divContainer.style.visibility = "visible";
@@ -263,28 +265,42 @@
 
         })
 
+        if (simpleUI) {
+            labels.forEach((label, index) => {
+                console.log(label)
+                let height = "40px";
+                let labelDiv = document.createElement("div");
+                labelDiv.style.height = height;
+                labelDiv.className = "label";
+                labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
 
-        labels.forEach((label, index) => {
-            let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
-            console.log(height);
-            // create labels
-            let labelDiv = document.createElement("div");
-            labelDiv.style.height = height;
-            labelDiv.className = "label";
-            labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
+                labelContainer.appendChild(labelDiv);
+            });
 
-            // create timestamp UI
-            let timeStampUI = document.createElement("div")
-            timeStampUI.className = "timestamp";
-            timeStampUI.style.width = "5px";
-            timeStampUI.id = "ts" + index.toString();
-            // console.log(divContainer.offsetHeight);
-            timeStampUI.style.height = height;
-            // timeStampUI.style.backgroundColor = random_bg_color();
+        } else {
+            labels.forEach((label, index) => {
+                let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
+                console.log(height);
+                // create labels
+                let labelDiv = document.createElement("div");
+                labelDiv.style.height = height;
+                labelDiv.className = "label";
+                labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
 
-            timeStampContainer.appendChild(timeStampUI);
-            labelContainer.appendChild(labelDiv);
-        });
+                // create timestamp UI
+                let timeStampUI = document.createElement("div")
+                timeStampUI.className = "timestamp";
+                timeStampUI.style.width = "5px";
+                timeStampUI.id = "ts" + index.toString();
+                // console.log(divContainer.offsetHeight);
+                timeStampUI.style.height = height;
+                // timeStampUI.style.backgroundColor = random_bg_color();
+
+                timeStampContainer.appendChild(timeStampUI);
+                labelContainer.appendChild(labelDiv);
+            });
+        }
+
 
     }
 
@@ -329,7 +345,6 @@
 
         holder.appendChild(container);
     }
-
 
     function random_bg_color() {
         var x = Math.floor(Math.random() * 256);

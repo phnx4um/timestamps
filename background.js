@@ -83,7 +83,6 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-
 function getID(url) {
     // get videoID from the URL
     var video_id = url.split('v=')[1];
