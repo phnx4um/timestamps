@@ -7,10 +7,9 @@
     let isPresentInDB = false;
     let videoInfo;
     let simpleUI = false;
+    let holder;
     const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
 
-
-    let holder;
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
@@ -65,16 +64,32 @@
             // create activate button
             holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
             console.log(holder.offsetHeight);
-            // add a button to the screen
-            // clicking on that would open the timestamp UI 
-            let activateButton = document.createElement("div");
-            activateButton.id = "activate-ext";
-            activateButton.addEventListener("click", displayUI);
-            holder.appendChild(activateButton);
 
-            // createSettingsMenu()
-            // generateSettingsMenu();
+            createMainUI()
+
         }, 5 * 1000);
+    }
+
+    function createMainUI() {
+        let uiContainer = document.createElement("div");
+        uiContainer.id = "ts-mui-c";
+        var image = document.createElement("img");
+        image.src = chrome.runtime.getURL("images/linear.png");
+        image.id = "activate-ext";
+        image.addEventListener("click", displayUI);
+
+        var settingImage = document.createElement("img");
+        settingImage.src = chrome.runtime.getURL("images/setting.png");
+        settingImage.id = "ts-setting-ext";
+
+        // createSettingsMenu()
+        // generateSettingsMenu();
+
+        uiContainer.appendChild(settingImage)
+        uiContainer.appendChild(image)
+
+        holder.appendChild(uiContainer)
+
     }
 
     function displayUI() {
