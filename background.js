@@ -33,7 +33,7 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
         let key = "videos/" + videoID;
         console.log(key);
 
-        // get the value fot that key from the database
+        // get the value for that key from the database
         let videoRef = database.ref(key);
         videoRef.once('value')
             .then(function(snapshot) {
@@ -55,6 +55,33 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
     }
 
 });
+
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        console.log(sender.tab ?
+            "from a content script:" + sender.tab.url :
+            "from the extension");
+        if (request.data) {
+            //get id
+            let id = getID(sender.tab.url);
+            let key = "videos/" + id;
+            console.log(key);
+            // query firebase
+            let videoRef = database.ref(key);
+            videoRef.once('value')
+                .then(function(snapshot) {
+                    var value = snapshot.val();
+                    console.log(value);
+                    // send the data to content script..
+                    sendResponse({ data: value });
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        }
+        return true;
+    }
+);
 
 
 function getID(url) {

@@ -182,7 +182,7 @@ input[type="color"]::-webkit-color-swatch {
 #ts-nfm-c {
     background-color: grey;
     opacity: 0.8;
-    height: 400px;
+    height: 60%;
     width: 300px;
     display: flex;
     flex-direction: column;

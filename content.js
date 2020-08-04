@@ -6,14 +6,20 @@
     let timeStampColor = "#FF7F50";
     let isPresentInDB = false;
     let videoInfo;
+    const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
+
 
     let holder;
     // regex to get the timestamps // improve ... these are cases when this will not work..
     const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
 
+    if (!((location.href).match(regWatch))) return;
+
+    console.log("hello");
+
     console.log(`ispresentDB ${isPresentInDB}`);
     chrome.runtime.onMessage.addListener(
-        function(request, sender, sendResponse) {
+        function(request) {
             console.log(request);
             // check what the firebase sends if data is not found
             if (request) {
@@ -26,13 +32,17 @@
 
     if (document.querySelector("#activate-ext")) {
         // the extension was loaded previously and is still active
-        // no need to build new UI... just remove the previous UI
+        // no need to initialise everything again... just remove the previous UI
         if (document.querySelector("#my-container")) {
             document.querySelector("#my-container").remove();
         }
-
+        // remove NO TIMESTAMPS MESSAGE too, if present
+        if (document.querySelector("#ts-nfm-c")) {
+            document.querySelector("#ts-nfm-c").remove();
+        }
     } else {
         console.log("hello !st time huh.... :p");
+
         chrome.storage.sync.get(['settingsInfo'], function(data) {
             // check if data exists.
             if (data.settingsInfo) {
@@ -43,6 +53,14 @@
             }
         });
 
+        // get data for the first time
+        chrome.runtime.sendMessage({ data: true }, function(response) {
+            console.log(response.data);
+            if (response.data) {
+                isPresentInDB = true;
+                videoInfo = response.data;
+            }
+        });
 
         setTimeout(() => {
             // create activate button
@@ -83,14 +101,14 @@
         let match = regex.exec(description);
         // console.log(match);
         if (match === null) {
-
-            // TODO //////////////////////////////////////////////
+            //////////////////////////////////////////////////////
             // no data found
             // dislay a message requesting to generate time-stamps
             //////////////////////////////////////////////////////
-
             console.log("Sorry No timestamps found");
-            displayNotFoundMessage();
+            if (!document.querySelector("#ts-nfm-c")) {
+                displayNotFoundMessage();
+            }
             return 0;
         }
 
@@ -311,6 +329,7 @@
 
         holder.appendChild(container);
     }
+
 
     function random_bg_color() {
         var x = Math.floor(Math.random() * 256);
