@@ -334,15 +334,17 @@
         message.innerHTML = "<span>NO TIMESTAMPS FOUND</span>";
         message.id = "ts-nfm-mc";
 
-        // secondary message
-        let addMessage = document.createElement("div");
-        addMessage.id = "ts-nfc-amc"
-        addMessage.innerHTML = "want to help";
+        // error img
+        let errorImg = document.createElement("div");
+        errorImg.id = "ts-nfm-ei";
+        let image = document.createElement("img");
+        image.src = chrome.runtime.getURL("images/error.png");
+        errorImg.appendChild(image);
 
         //button
         // TODO: add code to allow to submit timestamps
         let button = document.createElement("button");
-        button.innerHTML = "SURE"
+        button.innerHTML = "ADD";
 
         //div to remove this popup
         let removeDiv = document.createElement("div");
@@ -353,7 +355,7 @@
         });
 
         container.appendChild(message);
-        container.appendChild(addMessage);
+        container.appendChild(errorImg);
         container.appendChild(button);
         container.appendChild(removeDiv);
 
