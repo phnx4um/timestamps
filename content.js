@@ -457,6 +457,9 @@
         closeButton.id = "ts-set-close";
         closeButton.innerText = "\u2715";
         // add event lister to close the settings menu
+        closeButton.addEventListener("click", () => {
+            document.querySelector("#ts-model-maincontainer").remove();
+        });
 
         buttonContainer.appendChild(saveSettingBtn);
         buttonContainer.appendChild(closeButton);
