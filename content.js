@@ -61,7 +61,6 @@
         });
 
         setTimeout(() => {
-            // create activate button
             holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
             console.log(holder.offsetHeight);
 
@@ -81,9 +80,9 @@
         var settingImage = document.createElement("img");
         settingImage.src = chrome.runtime.getURL("images/setting.png");
         settingImage.id = "ts-setting-ext";
-
-        // createSettingsMenu()
-        // generateSettingsMenu();
+        settingImage.addEventListener("click", () => {
+            generateSettingsMenu();
+        });
 
         uiContainer.appendChild(settingImage)
         uiContainer.appendChild(image)
@@ -371,7 +370,6 @@
     }
     // generate this when settings button is clicked
     function generateSettingsMenu() {
-
         ////////////////////////////////////////////// 
         // SETTINGS MENU CODE 
         //////////////////////////////////////////////
@@ -457,7 +455,8 @@
 
         let closeButton = document.createElement("div");
         closeButton.id = "ts-set-close";
-        closeButton.innerText = "\u2715"
+        closeButton.innerText = "\u2715";
+        // add event lister to close the settings menu
 
         buttonContainer.appendChild(saveSettingBtn);
         buttonContainer.appendChild(closeButton);
@@ -466,10 +465,11 @@
         TAsettingsMenu.appendChild(hr1);
         TAsettingsMenu.appendChild(buttonContainer);
 
+        let modelContianer = document.createElement("div");
+        modelContianer.id = "ts-model-maincontainer";
 
-        // get element from UI
-        // let videoMetaInfo = document.getElementById("meta");
-        // videoMetaInfo.parentNode.insertBefore(TAsettingsMenu, videoMetaInfo);
+        modelContianer.appendChild(TAsettingsMenu);
+        document.getElementsByTagName("body")[0].appendChild(modelContianer);
     }
 
 })();
