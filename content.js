@@ -403,7 +403,7 @@
         TSName.innerText = "time bar";
         let TSInput = document.createElement("INPUT");
         TSInput.setAttribute("type", "color");
-        TSInput.setAttribute("value", "#e66465");
+        TSInput.setAttribute("value", timeStampColor);
         TSInput.id = "ts-tsui-color";
         TSColorContainer.appendChild(TSName);
         TSColorContainer.appendChild(TSInput);
@@ -414,7 +414,7 @@
         labelName.innerText = "label";
         let labelInput = document.createElement("INPUT");
         labelInput.setAttribute("type", "color");
-        labelInput.setAttribute("value", "#e66465");
+        labelInput.setAttribute("value", labelColor);
         labelInput.id = "ts-label-bg";
         labelColorContainer.appendChild(labelName)
         labelColorContainer.appendChild(labelInput);
@@ -439,13 +439,21 @@
         let saveSettingBtn = document.createElement("button");
         saveSettingBtn.innerText = "SAVE"
         saveSettingBtn.addEventListener("click", event => {
-            let labelColor = document.querySelector("#ts-label-bg").value;
+            // read values for various properties
+            // currently just 2 values.... may incease in future
+
+            let lColor = document.querySelector("#ts-label-bg").value;
             let tsUIColor = document.querySelector("#ts-tsui-color").value;
-            console.log(labelColor);
+            console.log(lColor);
             let info = {
-                lc: labelColor,
+                lc: lColor,
                 tsc: tsUIColor
             };
+
+            // change current color values
+            labelColor = lColor;
+            timeStampColor = tsUIColor;
+
             // Save it using the Chrome extension storage API.
             chrome.storage.sync.set({ 'settingsInfo': info }, function() {
                 // Notify that we saved.
