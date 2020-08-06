@@ -10,8 +10,8 @@
     let holder;
     const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
 
-    // regex to get the timestamps // improve ... these are cases when this will not work..
-    const regex = /^(?:((?:\d{1,2}:)?(?:\d{1,2}:)?\d{1,2}) *[-:]? *([A-Z\d].*)|([A-Z\d].*)(?<![ :-]) *[-:]? *(\d{2}-\d{2}-\d{4}))$/gmi;
+    // regex to get the timestamps // improved...
+    const regex = /^(?:((?:\d{1,2})?(?::\d{1,2})?:\d{1,2}) *(.*)|(.*) ((?:\d{1,2})?(?::\d{1,2})?:\d{1,2}))$/gmi;
 
     if (!((location.href).match(regWatch))) return;
 
@@ -106,7 +106,7 @@
 
     function getData() {
         // get data from description
-        let description = document.querySelector("#description").textContent;
+        let description = document.getElementById("columns").querySelector("#description").textContent;
         let totalTime = document.querySelector(".ytp-time-duration").innerText;
         console.log(description);
         console.log(totalTime);
@@ -131,6 +131,7 @@
         let timeIndex;
         let labelIndex;
 
+        // code below expects the timestamps to follow the same format for a particular video
         if (match[1] != undefined) {
             timeIndex = 1;
             labelIndex = 2;
@@ -139,7 +140,6 @@
             labelIndex = 3;
         }
 
-
         // generate arrays
         while (match) {
             timeStamps.push(timeToHHMMSS(match[timeIndex]));
@@ -147,40 +147,29 @@
             match = regex.exec(description)
         }
 
-        // adding total video time.. for calcultaion purposes
-        timeStamps.push(timeToHHMMSS(totalTime));
+        let values = timetoSecondsIncreasing(timeStamps, labels);
 
-        console.log(timeStamps);
-        console.log(labels);
-
-        let values = computeTimeRatios(timeStamps);
         let timeStampsInSeconds = values.timeStampsInSeconds;
-        let timeRatios = values.timeStampRatios;
+        labels = values.labels;
+        timeStamps = values.timeStamps;
+
+        // adding total video time.. for calcultaion purposes
+        timeStampsInSeconds.push(getTimeInSeconds(timeToHHMMSS(totalTime)));
+
+        console.log(`TIMESTAMPS: ${timeStamps}`);
+        console.log(`LABELS: ${labels}`);
+        console.log(`TIMESTAMPS IN SECONDS ${timeStampsInSeconds}`);
+
+        labels = formatLabels(labels, timeIndex)
+
+        let timeRatios = computeTimeRatios(timeStampsInSeconds);
 
         setTimeout(() => {
             generateUI(labels, timeRatios, timeStampsInSeconds);
         }, 0);
     }
 
-    function timeToHHMMSS(time) {
-        switch (time.split(':').length) {
-            case 3:
-                return time;
-            case 2:
-                time = "00:" + time;
-                return time
-            case 1:
-                time = "00:00:" + time;
-                break;
-            default:
-                console.log("NOT SUPPORTED");
-        }
-        return time;
-    }
-
-    function computeTimeRatios(timeStamps) {
-        // get all labels and timestamps and set thei background color to default
-
+    function timetoSecondsIncreasing(timeStamps, labels) {
         // convert the time array in seconds format
         let timeStampsInSeconds = timeStamps.map(time => {
             var a = time.split(':');
@@ -189,17 +178,74 @@
         });
         console.log(timeStampsInSeconds);
 
+        // check if the array is increasing
+        if (timeStampsInSeconds[0] < timeStampColor[1]) {
+            // sequnce is increasing 
+            // do nothing
+            return {
+                timeStampsInSeconds: timeStampsInSeconds,
+                timeStamps: timeStamps,
+                labels: labels
+            };
+
+        } else {
+            return {
+                timeStampsInSeconds: timeStampsInSeconds.reverse(),
+                timeStamps: timeStamps.reverse(),
+                labels: labels.reverse()
+            };
+        }
+    }
+
+
+    function formatLabels(labels, timeIndex) {
+        let result = labels;
+        if (timeIndex === 1) {
+            // time -> label 
+            if (labels.every(s => s[0] == labels[0][0])) {
+                result = labels.map(s => s.slice(1).trim());
+            }
+        }
+        if (timeIndex === 4) {
+            // label -> time 
+            if (labels.every(s => s[s.length - 1] == labels[0].slice(-1))) {
+                result = labels.map(s => s.slice(0, -1).trim());
+            }
+        }
+        console.log(result)
+
+        return result
+    }
+
+    // 1) :45  2) 3:45  3) 03:45  4) :03:45  5) 0:03:45 5) 00:03:45
+    // 5th is the format I need as as output from this functions
+    function timeToHHMMSS(time) {
+        // check if first character is ':' , add 00 if true
+        if (time[0] == ':') {
+            time = '00' + time;
+        }
+        switch (time.split(':').length) {
+            case 3:
+                return time;
+            case 2:
+                time = "00:" + time;
+                return time
+            default:
+                console.log("NOT SUPPORTED");
+        }
+        return;
+    }
+
+    function computeTimeRatios(timeStampsInSeconds) {
+
         let timeStampRatios = [];
         // mulplipying by 2 just to make rations more visible
         for (let i = 0; i < timeStampsInSeconds.length - 1; ++i) {
             timeStampRatios[i] = ((timeStampsInSeconds[i + 1] - timeStampsInSeconds[i]) / timeStampsInSeconds[timeStampsInSeconds.length - 1]) * 2;
         }
-        console.log(timeStampRatios);
+        console.log(`RATIOS ${timeStampRatios}`);
 
-        return {
-            timeStampsInSeconds: timeStampsInSeconds,
-            timeStampRatios: timeStampRatios,
-        };
+        return timeStampRatios;
     }
 
     function generateUI(labels, timeStampRatios, timeStampsInSeconds) {
