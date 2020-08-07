@@ -1,6 +1,6 @@
 (function() {
 
-    // get these values from the chrome storage..if present 
+    // get the values from the chrome storage..if present 
     // otherwise these are the default values
     let labelColor = "blue";
     let timeStampColor = "#FF7F50";
@@ -147,6 +147,9 @@
             match = regex.exec(description)
         }
 
+        console.log(timeStamps);
+        console.log(labels);
+
         let values = timetoSecondsIncreasing(timeStamps, labels);
 
         let timeStampsInSeconds = values.timeStampsInSeconds;
@@ -169,6 +172,26 @@
         }, 0);
     }
 
+    // supported time stamps...
+    // 1) :45  2) 3:45  3) 03:45  4) :03:45  5) 0:03:45 5) 00:03:45
+    // 5th is the format I need as as output from this functions
+    function timeToHHMMSS(time) {
+        // check if first character is ':' , add 00 if true
+        if (time[0] == ':') {
+            time = '00' + time;
+        }
+        switch (time.split(':').length) {
+            case 3:
+                return time;
+            case 2:
+                time = "00:" + time;
+                return time
+            default:
+                console.log("NOT SUPPORTED");
+        }
+        return;
+    }
+
     function timetoSecondsIncreasing(timeStamps, labels) {
         // convert the time array in seconds format
         let timeStampsInSeconds = timeStamps.map(time => {
@@ -180,7 +203,7 @@
 
         // check if the array is increasing //maybe check for all values
         // for now this is fine
-        if (timeStampsInSeconds[0] < timeStampColor[1]) {
+        if (timeStampsInSeconds[0] < timeStampsInSeconds[1]) {
             // sequnce is increasing 
             // do nothing
             return {
@@ -218,25 +241,6 @@
         return result
     }
 
-    // supported time stamps...
-    // 1) :45  2) 3:45  3) 03:45  4) :03:45  5) 0:03:45 5) 00:03:45
-    // 5th is the format I need as as output from this functions
-    function timeToHHMMSS(time) {
-        // check if first character is ':' , add 00 if true
-        if (time[0] == ':') {
-            time = '00' + time;
-        }
-        switch (time.split(':').length) {
-            case 3:
-                return time;
-            case 2:
-                time = "00:" + time;
-                return time
-            default:
-                console.log("NOT SUPPORTED");
-        }
-        return;
-    }
 
     function computeTimeRatios(timeStampsInSeconds) {
 
@@ -346,7 +350,7 @@
             let heights = timeStampRatios.map(ratio => ratio * divContainerHeight);
             console.log(heights);
 
-            // check if every height in heights array is greater than minLabelHeight
+            // check if every height in heights array ism(not) greater than minLabelHeight
             if (!(heights.every(height => height > minLabelHeight))) {
                 heights = heights.map(height => height + 10);
             }

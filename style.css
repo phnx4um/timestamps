@@ -279,6 +279,11 @@ input[type="color"]::-webkit-color-swatch {
     border-radius: 2px;
 }
 
+.labeltext:hover {
+    cursor: pointer;
+    color: antiquewhite;
+}
+
 
 /* ==============timestams not found message(ts-nfm) container styling============== */
 
