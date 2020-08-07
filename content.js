@@ -2,7 +2,7 @@
 
     // get the values from the chrome storage..if present 
     // otherwise these are the default values
-    let labelColor = "blue";
+    let labelColor = "#0000FF";
     let timeStampColor = "#FF7F50";
     let isPresentInDB = false;
     let videoInfo;
