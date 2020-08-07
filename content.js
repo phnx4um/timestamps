@@ -302,14 +302,16 @@
             // console.log(timeStampsInSeconds)
             for (let i = 0; i < timeStampsInSeconds.length; i++) {
                 // console.log(timeStampsInSeconds[i]);
-                if (timeStampsInSeconds[i] >= currentTime) {
-                    currentTS = i;
+                if (timeStampsInSeconds[i] > currentTime) {
+                    // console.log(timeStampsInSeconds[i]);
+                    currentTS = i - 1;
                     break;
                 }
             }
+            console.log(currentTS);
             // change UI color for topics which are done
-            for (let i = 0; i < currentTS; i++) {
-                if (i == (currentTS - 1)) {
+            for (let i = 0; i <= currentTS; i++) {
+                if (i == currentTS) {
                     // this topic is still going on
                     let labeltextid = "labeltext" + i.toString();
                     document.getElementById(labeltextid).style.backgroundColor = labelColor;
