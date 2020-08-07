@@ -8,6 +8,7 @@
     let videoInfo;
     let simpleUI = false;
     let holder;
+    let ytPlayer;
     const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
 
     // regex to get the timestamps // improved...
@@ -92,6 +93,10 @@
     }
 
     function displayUI() {
+        // get a reference to youtube player
+        ytPlayer = document.getElementsByTagName('video')[0];
+
+        console.log(ytPlayer);
         if (isPresentInDB) {
             // present in database
             // directly generate UI
@@ -288,9 +293,11 @@
 
             // render again
             // get current time
+            // can also get time using iframePlayer API....
             let currentTime = document.querySelector(".ytp-time-current").innerText;
             currentTime = getTimeInSeconds(timeToHHMMSS(currentTime));
             console.log(currentTime);
+
             let currentTS = 0;
             // console.log(timeStampsInSeconds)
             for (let i = 0; i < timeStampsInSeconds.length; i++) {
@@ -350,18 +357,34 @@
             let heights = timeStampRatios.map(ratio => ratio * divContainerHeight);
             console.log(heights);
 
-            // check if every height in heights array ism(not) greater than minLabelHeight
+            // check if every height in heights array is(not) greater than minLabelHeight
             if (!(heights.every(height => height > minLabelHeight))) {
                 heights = heights.map(height => height + 10);
             }
             console.log(heights);
 
+            ///////////////////////////////////////////
+            // labels and timebars are created here
+            ///////////////////////////////////////////
             labels.forEach((label, index) => {
                 // create labels
                 let labelDiv = document.createElement("div");
                 labelDiv.style.height = heights[index] + "px";
                 labelDiv.className = "label";
-                labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
+                // labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
+
+                let labelTextSpan = document.createElement('span');
+                labelTextSpan.className = "labeltext";
+                labelTextSpan.id = "labeltext" + index.toString();
+                labelTextSpan.innerText = label;
+                labelTextSpan.setAttribute("data-seek", timeStampsInSeconds[index]);
+                // code for seeking....
+                labelTextSpan.addEventListener("click", (e) => {
+                    console.log(e.target.dataset.seek);
+                    ytPlayer.currentTime = parseInt(e.target.dataset.seek, 10);
+
+                });
+                labelDiv.appendChild(labelTextSpan);
 
                 // create timestamp UI
                 let timeStampUI = document.createElement("div")
