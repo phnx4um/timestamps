@@ -178,7 +178,8 @@
         });
         console.log(timeStampsInSeconds);
 
-        // check if the array is increasing
+        // check if the array is increasing //maybe check for all values
+        // for now this is fine
         if (timeStampsInSeconds[0] < timeStampColor[1]) {
             // sequnce is increasing 
             // do nothing
@@ -217,6 +218,7 @@
         return result
     }
 
+    // supported time stamps...
     // 1) :45  2) 3:45  3) 03:45  4) :03:45  5) 0:03:45 5) 00:03:45
     // 5th is the format I need as as output from this functions
     function timeToHHMMSS(time) {
@@ -338,12 +340,22 @@
             });
 
         } else {
+            let divContainerHeight = divContainer.offsetHeight;
+            let minLabelHeight = 10;
+            // get height array using timestamRatios
+            let heights = timeStampRatios.map(ratio => ratio * divContainerHeight);
+            console.log(heights);
+
+            // check if every height in heights array is greater than minLabelHeight
+            if (!(heights.every(height => height > minLabelHeight))) {
+                heights = heights.map(height => height + 10);
+            }
+            console.log(heights);
+
             labels.forEach((label, index) => {
-                let height = (divContainer.offsetHeight * timeStampRatios[index]) + "px";
-                console.log(height);
                 // create labels
                 let labelDiv = document.createElement("div");
-                labelDiv.style.height = height;
+                labelDiv.style.height = heights[index] + "px";
                 labelDiv.className = "label";
                 labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
 
@@ -353,15 +365,13 @@
                 timeStampUI.style.width = "5px";
                 timeStampUI.id = "ts" + index.toString();
                 // console.log(divContainer.offsetHeight);
-                timeStampUI.style.height = height;
+                timeStampUI.style.height = heights[index] + "px";
                 // timeStampUI.style.backgroundColor = random_bg_color();
 
                 timeStampContainer.appendChild(timeStampUI);
                 labelContainer.appendChild(labelDiv);
             });
         }
-
-
     }
 
     function getTimeInSeconds(time) {
@@ -416,6 +426,7 @@
         console.log(bgColor);
         return bgColor
     }
+
     // generate this when settings button is clicked
     function generateSettingsMenu() {
         ////////////////////////////////////////////// 
