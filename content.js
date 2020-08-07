@@ -278,56 +278,10 @@
         divContainer.appendChild(timeStampContainer);
 
         divContainer.addEventListener("mouseenter", e => {
-            // remove previously rendered labelsColors and timestamp color
-            allTimeStampsUI = document.querySelectorAll(".timestamp");
-            allLabelText = document.querySelectorAll(".labeltext");
-
-            allTimeStampsUI.forEach(timeStampUI => {
-                // console.log(timeStampUI);
-                timeStampUI.style.backgroundColor = "rgb(85, 83, 83)";
-            });
-            allLabelText.forEach(labelText => {
-                // console.log(labelText);
-                labelText.style.backgroundColor = "black";
-            });
-
-            // render again
-            // get current time
-            // can also get time using iframePlayer API....
-            let currentTime = document.querySelector(".ytp-time-current").innerText;
-            currentTime = getTimeInSeconds(timeToHHMMSS(currentTime));
-            console.log(currentTime);
-
-            let currentTS = 0;
-            // console.log(timeStampsInSeconds)
-            for (let i = 0; i < timeStampsInSeconds.length; i++) {
-                // console.log(timeStampsInSeconds[i]);
-                if (timeStampsInSeconds[i] > currentTime) {
-                    // console.log(timeStampsInSeconds[i]);
-                    currentTS = i - 1;
-                    break;
-                }
-            }
-            console.log(currentTS);
-            // change UI color for topics which are done
-            for (let i = 0; i <= currentTS; i++) {
-                if (i == currentTS) {
-                    // this topic is still going on
-                    let labeltextid = "labeltext" + i.toString();
-                    document.getElementById(labeltextid).style.backgroundColor = labelColor;
-                    break;
-                }
-                if (!simpleUI) {
-                    let tsid = "ts" + i.toString();
-                    document.getElementById(tsid).style.backgroundColor = timeStampColor;
-                }
-
-            }
-
+            updateUI(timeStampsInSeconds);
             // divContainer.style.visibility = "visible";
             timeStampContainer.style.visibility = "visible";
             labelContainer.style.visibility = "visible";
-
         });
 
         // hide the container again when mouse leaves
@@ -341,6 +295,7 @@
         })
 
         if (simpleUI) {
+            // generate only labels for simple UI without timebars
             labels.forEach((label, index) => {
                 console.log(label)
                 let height = "40px";
@@ -353,6 +308,7 @@
             });
 
         } else {
+            // generate both labels and timebars
             let divContainerHeight = divContainer.offsetHeight;
             let minLabelHeight = 10;
             // get height array using timestamRatios
@@ -384,7 +340,7 @@
                 labelTextSpan.addEventListener("click", (e) => {
                     console.log(e.target.dataset.seek);
                     ytPlayer.currentTime = parseInt(e.target.dataset.seek, 10);
-
+                    updateUI(timeStampsInSeconds);
                 });
                 labelDiv.appendChild(labelTextSpan);
 
@@ -403,11 +359,59 @@
         }
     }
 
-    function getTimeInSeconds(time) {
-        var a = time.split(':');
-        var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
-        return seconds
+
+    function updateUI(timeStampsInSeconds) {
+        console.log(" in Update UI");
+
+        allTimeStampsUI = document.querySelectorAll(".timestamp");
+        allLabelText = document.querySelectorAll(".labeltext");
+
+        // remove previously rendered labelsColors and timestamp color
+        allTimeStampsUI.forEach(timeStampUI => {
+            // console.log(timeStampUI);
+            timeStampUI.style.backgroundColor = "rgb(85, 83, 83)";
+        });
+        allLabelText.forEach(labelText => {
+            // console.log(labelText);
+            labelText.style.backgroundColor = "black";
+        });
+
+        // render again
+        // get current time
+        // can also get time using iframePlayer API....
+        // let currentTime = document.querySelector(".ytp-time-current").innerText;
+        // currentTime = getTimeInSeconds(timeToHHMMSS(currentTime));
+        currentTime = ytPlayer.currentTime
+        console.log(currentTime);
+
+        let currentTS = 0;
+        // console.log(timeStampsInSeconds)
+        for (let i = 0; i < timeStampsInSeconds.length; i++) {
+            // console.log(timeStampsInSeconds[i]);
+            if (timeStampsInSeconds[i] > currentTime) {
+                // console.log(timeStampsInSeconds[i]);
+                currentTS = i - 1;
+                break;
+            }
+        }
+        console.log(currentTS);
+        // change UI color for topics which are done
+        for (let i = 0; i <= currentTS; i++) {
+            if (i == currentTS) {
+                // this topic is still going on
+                let labeltextid = "labeltext" + i.toString();
+                document.getElementById(labeltextid).style.backgroundColor = labelColor;
+                break;
+            }
+            if (!simpleUI) {
+                let tsid = "ts" + i.toString();
+                document.getElementById(tsid).style.backgroundColor = timeStampColor;
+            }
+
+        }
+
     }
+
 
     function displayNotFoundMessage() {
         let container = document.createElement("div");
@@ -445,6 +449,12 @@
         container.appendChild(removeDiv);
 
         holder.appendChild(container);
+    }
+
+    function getTimeInSeconds(time) {
+        var a = time.split(':');
+        var seconds = parseInt(a[0], 10) * 60 * 60 + parseInt(a[1], 10) * 60 + parseInt(a[2], 10);
+        return seconds
     }
 
     function random_bg_color() {
