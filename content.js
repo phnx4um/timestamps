@@ -93,19 +93,22 @@
     }
 
     function displayUI() {
-        // get a reference to youtube player
-        ytPlayer = document.getElementsByTagName('video')[0];
-
-        console.log(ytPlayer);
-        if (isPresentInDB) {
-            // present in database
-            // directly generate UI
-            generateUI(videoInfo["labels"], videoInfo["time-ratios"], videoInfo["time-stamps"]);
-        } else {
-            // get data from the description
-            // and then generate UI
-            getData();
+        // if already exists.. no need to do anything
+        if (!document.getElementById("my-container")) {
+            // get a reference to youtube player
+            ytPlayer = document.getElementsByTagName('video')[0];
+            console.log(ytPlayer);
+            if (isPresentInDB) {
+                // present in database
+                // directly generate UI
+                generateUI(videoInfo["labels"], videoInfo["time-ratios"], videoInfo["time-stamps"]);
+            } else {
+                // get data from the description
+                // and then generate UI
+                getData();
+            }
         }
+
     }
 
 
