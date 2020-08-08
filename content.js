@@ -1,12 +1,17 @@
 (function() {
 
+    let l; // label 
+    let tr; // ratios
+    let ts; // stamps in seconds
+
     // get the values from the chrome storage..if present 
     // otherwise these are the default values
     let labelColor = "#0000FF";
     let timeStampColor = "#FF7F50";
     let isPresentInDB = false;
-    let videoInfo;
     let simpleUI = false;
+
+    let videoInfo;
     let holder;
     let ytPlayer;
     const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
@@ -25,6 +30,9 @@
                 isPresentInDB = true;
                 console.log(`ispresentDB in eventlistener ${isPresentInDB}`);
                 videoInfo = request;
+                l = videoInfo["labels"];
+                tr = videoInfo["time-ratios"];
+                ts = videoInfo["time-stamps"];
             }
         }
     );
@@ -44,20 +52,26 @@
 
         chrome.storage.sync.get(['settingsInfo'], function(data) {
             // check if data exists.
+            //otherwise use the default values
             if (data.settingsInfo) {
                 console.log(data);
                 labelColor = data.settingsInfo.lc;
                 timeStampColor = data.settingsInfo.tsc;
-                console.log(labelColor, timeStampColor);
+                simpleUI = data.settingsInfo.simple;
+                console.log(labelColor, timeStampColor, simpleUI);
             }
         });
 
         // get data for the first time
+        // incase u directly land on watch video...
         chrome.runtime.sendMessage({ data: true }, function(response) {
             console.log(response.data);
             if (response.data) {
                 isPresentInDB = true;
                 videoInfo = response.data;
+                l = videoInfo["labels"];
+                tr = videoInfo["time-ratios"];
+                ts = videoInfo["time-stamps"];
             }
         });
 
@@ -174,6 +188,10 @@
         labels = formatLabels(labels, timeIndex)
 
         let timeRatios = computeTimeRatios(timeStampsInSeconds);
+
+        l = labels;
+        tr = timeRatios
+        ts = timeStampsInSeconds
 
         setTimeout(() => {
             generateUI(labels, timeRatios, timeStampsInSeconds);
@@ -308,6 +326,9 @@
                 labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
 
                 labelContainer.appendChild(labelDiv);
+
+
+
             });
 
         } else {
@@ -533,6 +554,34 @@
         let hr1 = document.createElement("hr");
         hr1.className = "ts-set-divider";
 
+        // UI with graphics or Simple UI
+        let optionsContainer = document.createElement("div");
+        optionsContainer.id = "ts-set-oc";
+        let displayOptionContainer = document.createElement("div");
+        displayOptionContainer.className = "ts-set-doc";
+        // text
+        let t = document.createElement("div");
+        t.innerText = "show only labels";
+        // radio button
+        var x = document.createElement("INPUT");
+        x.id = "ts-set-UIcheck"
+        x.setAttribute("type", "checkbox");
+        x.checked = simpleUI;
+
+        let extraInfo = document.createElement("div")
+        extraInfo.innerText = "PRO ";
+        extraInfo.id = "ts-set-pro";
+
+        displayOptionContainer.appendChild(t);
+        displayOptionContainer.appendChild(x);
+
+        optionsContainer.appendChild(displayOptionContainer);
+        optionsContainer.appendChild(extraInfo)
+
+        // divider
+        let hr2 = document.createElement("hr");
+        hr2.className = "ts-set-divider";
+
         // save button and close 
         let buttonContainer = document.createElement("div");
         buttonContainer.id = "ts-set-bc";
@@ -545,15 +594,23 @@
 
             let lColor = document.querySelector("#ts-label-bg").value;
             let tsUIColor = document.querySelector("#ts-tsui-color").value;
+            let isSimple = document.querySelector("#ts-set-UIcheck").checked;
             console.log(lColor);
             let info = {
                 lc: lColor,
-                tsc: tsUIColor
+                tsc: tsUIColor,
+                simple: isSimple
             };
 
             // change current color values
             labelColor = lColor;
             timeStampColor = tsUIColor;
+            simpleUI = isSimple;
+
+            if (document.querySelector("#my-container")) {
+                document.querySelector("#my-container").remove();
+                generateUI(l, tr, ts);
+            }
 
             // Save it using the Chrome extension storage API.
             chrome.storage.sync.set({ 'settingsInfo': info }, function() {
@@ -575,6 +632,8 @@
 
         TAsettingsMenu.appendChild(styleContainer);
         TAsettingsMenu.appendChild(hr1);
+        TAsettingsMenu.appendChild(optionsContainer);
+        TAsettingsMenu.appendChild(hr2);
         TAsettingsMenu.appendChild(buttonContainer);
 
         let modelContianer = document.createElement("div");
