@@ -8,7 +8,7 @@
     // otherwise these are the default values
     let labelColor = "#0000FF";
     let timeStampColor = "#FF7F50";
-    let isPresentInDB = false;
+    // let isPresentInDB = false;
     let simpleUI = false;
 
     let videoInfo;
@@ -21,21 +21,21 @@
 
     if (!((location.href).match(regWatch))) return;
 
-    console.log(`ispresentDB ${isPresentInDB}`);
-    chrome.runtime.onMessage.addListener(
-        function(request) {
-            console.log(request);
-            // check what the firebase sends if data is not found
-            if (request) {
-                isPresentInDB = true;
-                console.log(`ispresentDB in eventlistener ${isPresentInDB}`);
-                videoInfo = request;
-                l = videoInfo["labels"];
-                tr = videoInfo["time-ratios"];
-                ts = videoInfo["time-stamps"];
-            }
-        }
-    );
+    // console.log(`ispresentDB ${isPresentInDB}`);
+    // chrome.runtime.onMessage.addListener(
+    //     function(request) {
+    //         console.log(request);
+    //         // check what the firebase sends if data is not found
+    //         if (request) {
+    //             isPresentInDB = true;
+    //             console.log(`ispresentDB in eventlistener ${isPresentInDB}`);
+    //             videoInfo = request;
+    //             l = videoInfo["labels"];
+    //             tr = videoInfo["time-ratios"];
+    //             ts = videoInfo["time-stamps"];
+    //         }
+    //     }
+    // );
 
     if (document.querySelector("#activate-ext")) {
         // the extension was loaded previously and is still active
@@ -59,19 +59,6 @@
                 timeStampColor = data.settingsInfo.tsc;
                 simpleUI = data.settingsInfo.simple;
                 console.log(labelColor, timeStampColor, simpleUI);
-            }
-        });
-
-        // get data for the first time
-        // incase u directly land on watch video...
-        chrome.runtime.sendMessage({ data: true }, function(response) {
-            console.log(response.data);
-            if (response.data) {
-                isPresentInDB = true;
-                videoInfo = response.data;
-                l = videoInfo["labels"];
-                tr = videoInfo["timeRatios"];
-                ts = videoInfo["timeStampsInSeconds"];
             }
         });
 
@@ -106,23 +93,45 @@
     }
 
     function displayUI() {
+
         // if already exists.. no need to do anything
         if (!document.getElementById("my-container")) {
             // get a reference to youtube player
             ytPlayer = document.getElementsByTagName('video')[0];
             console.log(ytPlayer);
-            if (isPresentInDB) {
-                console.log("DISPLUY UI DB PRESEN TIN FORESTORE");
-                // present in database
-                // directly generate UI
-                generateUI(videoInfo["labels"], videoInfo["timeRatios"], videoInfo["timeStampsInSeconds"]);
-            } else {
-                // get data from the description
-                // and then generate UI
-                getData();
-            }
-        }
 
+            chrome.runtime.sendMessage({ data: true }, function(response) {
+                console.log(response.data);
+                if (response.data) {
+                    // data exists in DB
+                    // isPresentInDB = true;
+                    videoInfo = response.data;
+                    l = videoInfo["labels"];
+                    tr = videoInfo["timeRatios"];
+                    ts = videoInfo["timeStampsInSeconds"];
+                    console.log("PRESENT IN FIRESTORE");
+                    // present in database
+                    // directly generate UI
+                    generateUI(videoInfo["labels"], videoInfo["timeRatios"], videoInfo["timeStampsInSeconds"]);
+                } else {
+                    // get data from the description
+                    // and then generate UI
+                    getData();
+                }
+            });
+        }
+        // // if already exists.. no need to do anything
+        // if (!document.getElementById("my-container")) {
+        //     // get a reference to youtube player
+
+        //     if (isPresentInDB) {
+
+        //     } else {
+        //         // get data from the description
+        //         // and then generate UI
+        //         getData();
+        //     }
+        // }
     }
 
 
@@ -641,59 +650,60 @@
         document.getElementsByTagName("body")[0].appendChild(modelContianer);
     }
 
-    // function addTimeStamps() {
-    //     //create UI
+    function addTimeStamps() {
+        //create UI
 
-    //     // main container 
-    //     let container = document.createElement("div");
-    //     container.id = "ts-add-container";
-    //     holder.appendChild(container);
+        // main container 
+        let container = document.createElement("div");
+        container.id = "ts-add-container";
+        holder.appendChild(container);
 
-    //     // Textarea container
-    //     let textAreaContainer = document.createElement("TEXTAREA");
-    //     textAreaContainer.id = "ts-add-tac";
+        // Textarea container
+        let textAreaContainer = document.createElement("TEXTAREA");
+        textAreaContainer.id = "ts-add-tac";
 
-    //     let ts = document.createElement("TEXTAREA");
-    //     ts.id = "ts-add-ts";
-    //     ts.setAttribute("placeholder", "TIMESTAMPS HERE");
-    //     let tsResult = document.createElement("TEXTAREA");
-    //     tsResult.id = "ts-add-ts-result";
-    //     tsResult.style.display = "none";
-    //     let hint = document.createElement("div");
-    //     hint.id = "ts-add-hint";
-    //     hint.style.display = "none";
+        let ts = document.createElement("TEXTAREA");
+        ts.id = "ts-add-ts";
+        ts.setAttribute("placeholder", "TIMESTAMPS HERE");
+        let tsResult = document.createElement("TEXTAREA");
+        tsResult.id = "ts-add-ts-result";
+        tsResult.style.display = "none";
+        let hint = document.createElement("div");
+        hint.id = "ts-add-hint";
+        hint.style.display = "none";
 
-    //     textAreaContainer.appendChild(ts);
-    //     textAreaContainer.appendChild(tsResult);
-    //     textAreaContainer.appendChild(hint);
+        textAreaContainer.appendChild(ts);
+        textAreaContainer.appendChild(tsResult);
+        textAreaContainer.appendChild(hint);
 
-    //     // button container 
-    //     let bc = document.createElement("div");
-    //     bc.id = "ts-add-bc";
+        // button container 
+        let bc = document.createElement("div");
+        bc.id = "ts-add-bc";
 
-    //     let s = document.createElement("span");
-    //     s.id = "ts-add-next-span";
+        let s = document.createElement("span");
+        s.id = "ts-add-next-span";
 
-    //     let next = document.createElement("button");
-    //     next.id = "ts-add-next";
-    //     next.className = "ts-add-button";
-    //     next.style.verticalAlign = "middle";
-    //     next.innerHTML = "<span>NEXT </span>";
+        let next = document.createElement("button");
+        next.id = "ts-add-next";
+        next.className = "ts-add-button";
+        next.style.verticalAlign = "middle";
+        next.innerHTML = "<span>NEXT </span>";
 
-    //     s.appendChild(next);
+        s.appendChild(next);
 
-    //     let submit = document.createElement("button");
-    //     submit.id = "ts-add-submit";
-    //     submit.className = "ts-add-button";
-    //     submit.style.verticalAlign = "middle";
-    //     submit.style.visibility = "hidden";
-    //     submit.innerHTML = "<span>SUBMIT </span>";
+        let submit = document.createElement("button");
+        submit.id = "ts-add-submit";
+        submit.className = "ts-add-button";
+        submit.style.verticalAlign = "middle";
+        submit.style.visibility = "hidden";
+        submit.innerHTML = "<span>SUBMIT </span>";
 
-    //     bc.appendChild(s);
-    //     bc.appendChild(submit);
+        bc.appendChild(s);
+        bc.appendChild(submit);
 
-    //     // add to container
-    //     container.appendChild(textAreaContainer);
-    //     container.appendChild(bc);
-    // }
+        // add to container
+        container.appendChild(textAreaContainer);
+        container.appendChild(bc);
+    }
+
 })();

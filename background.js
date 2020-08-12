@@ -36,16 +36,15 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
     console.log(details);
     // match if its youtube watch page
     if ((details.url).match(regWatch)) {
-        let videoID;
+        // let videoID;
         console.log(details.url);
         chrome.tabs.executeScript(null, { file: "content.js" });
 
-        videoID = getID(details.url);
-        console.log(videoID);
+        // videoID = getID(details.url);
+        // console.log(videoID);
 
-        let key = "videos/" + videoID;
-        console.log(key);
-
+        // let key = "videos/" + videoID;
+        // console.log(key);
         // get the value for that key from the database
         // let videoRef = database.ref(key);
         // videoRef.once('value')
