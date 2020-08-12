@@ -70,15 +70,14 @@
                 isPresentInDB = true;
                 videoInfo = response.data;
                 l = videoInfo["labels"];
-                tr = videoInfo["time-ratios"];
-                ts = videoInfo["time-stamps"];
+                tr = videoInfo["timeRatios"];
+                ts = videoInfo["timeStampsInSeconds"];
             }
         });
 
         setTimeout(() => {
             holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
             console.log(holder.offsetHeight);
-
             createMainUI()
 
         }, 5 * 1000);
@@ -113,9 +112,10 @@
             ytPlayer = document.getElementsByTagName('video')[0];
             console.log(ytPlayer);
             if (isPresentInDB) {
+                console.log("DISPLUY UI DB PRESEN TIN FORESTORE");
                 // present in database
                 // directly generate UI
-                generateUI(videoInfo["labels"], videoInfo["time-ratios"], videoInfo["time-stamps"]);
+                generateUI(videoInfo["labels"], videoInfo["timeRatios"], videoInfo["timeStampsInSeconds"]);
             } else {
                 // get data from the description
                 // and then generate UI
@@ -317,6 +317,7 @@
 
         if (simpleUI) {
             // generate only labels for simple UI without timebars
+            // no seek functionality
             labels.forEach((label, index) => {
                 console.log(label)
                 let height = "40px";
@@ -326,13 +327,10 @@
                 labelDiv.innerHTML = '<span class="labeltext" id=labeltext' + index.toString() + '>' + label + '</span>';
 
                 labelContainer.appendChild(labelDiv);
-
-
-
             });
-
         } else {
             // generate both labels and timebars
+            // with seek functionality
             let divContainerHeight = divContainer.offsetHeight;
             let minLabelHeight = 10;
             // get height array using timestamRatios
@@ -643,4 +641,59 @@
         document.getElementsByTagName("body")[0].appendChild(modelContianer);
     }
 
+    // function addTimeStamps() {
+    //     //create UI
+
+    //     // main container 
+    //     let container = document.createElement("div");
+    //     container.id = "ts-add-container";
+    //     holder.appendChild(container);
+
+    //     // Textarea container
+    //     let textAreaContainer = document.createElement("TEXTAREA");
+    //     textAreaContainer.id = "ts-add-tac";
+
+    //     let ts = document.createElement("TEXTAREA");
+    //     ts.id = "ts-add-ts";
+    //     ts.setAttribute("placeholder", "TIMESTAMPS HERE");
+    //     let tsResult = document.createElement("TEXTAREA");
+    //     tsResult.id = "ts-add-ts-result";
+    //     tsResult.style.display = "none";
+    //     let hint = document.createElement("div");
+    //     hint.id = "ts-add-hint";
+    //     hint.style.display = "none";
+
+    //     textAreaContainer.appendChild(ts);
+    //     textAreaContainer.appendChild(tsResult);
+    //     textAreaContainer.appendChild(hint);
+
+    //     // button container 
+    //     let bc = document.createElement("div");
+    //     bc.id = "ts-add-bc";
+
+    //     let s = document.createElement("span");
+    //     s.id = "ts-add-next-span";
+
+    //     let next = document.createElement("button");
+    //     next.id = "ts-add-next";
+    //     next.className = "ts-add-button";
+    //     next.style.verticalAlign = "middle";
+    //     next.innerHTML = "<span>NEXT </span>";
+
+    //     s.appendChild(next);
+
+    //     let submit = document.createElement("button");
+    //     submit.id = "ts-add-submit";
+    //     submit.className = "ts-add-button";
+    //     submit.style.verticalAlign = "middle";
+    //     submit.style.visibility = "hidden";
+    //     submit.innerHTML = "<span>SUBMIT </span>";
+
+    //     bc.appendChild(s);
+    //     bc.appendChild(submit);
+
+    //     // add to container
+    //     container.appendChild(textAreaContainer);
+    //     container.appendChild(bc);
+    // }
 })();

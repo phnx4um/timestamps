@@ -2,21 +2,34 @@
 const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
 
 
-var firebaseConfig = {
-    apiKey: "AIzaSyDoOvv_JnPMGjl2yrVGvCOEDT-mIb1iNeY",
-    authDomain: "time-line-a2ea3.firebaseapp.com",
-    databaseURL: "https://time-line-a2ea3.firebaseio.com",
-    projectId: "time-line-a2ea3",
-    storageBucket: "time-line-a2ea3.appspot.com",
-    messagingSenderId: "202568583915",
-    appId: "1:202568583915:web:2e5fcbedc8706ed3bb8cae",
-    measurementId: "G-K8LPNLPBHB"
-};
+// var firebaseConfig = {
+//     apiKey: "AIzaSyDoOvv_JnPMGjl2yrVGvCOEDT-mIb1iNeY",
+//     authDomain: "time-line-a2ea3.firebaseapp.com",
+//     databaseURL: "https://time-line-a2ea3.firebaseio.com",
+//     projectId: "time-line-a2ea3",
+//     storageBucket: "time-line-a2ea3.appspot.com",
+//     messagingSenderId: "202568583915",
+//     appId: "1:202568583915:web:2e5fcbedc8706ed3bb8cae",
+//     measurementId: "G-K8LPNLPBHB"
+// };
 
+// firebase.initializeApp(firebaseConfig);
+// console.log(firebase);
+// var database = firebase.database();
+// console.log(database);
+
+var firebaseConfig = {
+    apiKey: "AIzaSyBQ7GK_X0UqLeiyxSWNifRKi8FNteXjJW8",
+    authDomain: "timestamps-47c23.firebaseapp.com",
+    databaseURL: "https://timestamps-47c23.firebaseio.com",
+    projectId: "timestamps-47c23",
+    storageBucket: "timestamps-47c23.appspot.com",
+    messagingSenderId: "1012714644423",
+    appId: "1:1012714644423:web:6de7d681954595e9e6efe2"
+};
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-console.log(firebase);
-var database = firebase.database();
-console.log(database);
+const database = firebase.firestore();
 
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
@@ -34,19 +47,19 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
         console.log(key);
 
         // get the value for that key from the database
-        let videoRef = database.ref(key);
-        videoRef.once('value')
-            .then(function(snapshot) {
-                var value = snapshot.val();
-                console.log(value);
-                // send the data to content script..
-                chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, value);
-                });
-            })
-            .catch(e => {
-                console.log(e);
-            });
+        // let videoRef = database.ref(key);
+        // videoRef.once('value')
+        //     .then(function(snapshot) {
+        //         var value = snapshot.val();
+        //         console.log(value);
+        //         // send the data to content script..
+        //         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        //             chrome.tabs.sendMessage(tabs[0].id, value);
+        //         });
+        //     })
+        //     .catch(e => {
+        //         console.log(e);
+        //     });
 
     } else {
         // any other website except youtube or
@@ -64,13 +77,13 @@ chrome.runtime.onMessage.addListener(
         if (request.data) {
             //get id
             let id = getID(sender.tab.url);
-            let key = "videos/" + id;
+            let key = id;
             console.log(key);
             // query firebase
-            let videoRef = database.ref(key);
-            videoRef.once('value')
-                .then(function(snapshot) {
-                    var value = snapshot.val();
+            let videoRef = database.collection("videos").doc(key);
+            videoRef.get()
+                .then(function(doc) {
+                    var value = doc.data();
                     console.log(value);
                     // send the data to content script..
                     sendResponse({ data: value });
