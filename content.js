@@ -65,7 +65,7 @@
         setTimeout(() => {
             holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
             console.log(holder.offsetHeight);
-            createMainUI()
+            createMainUI();
 
         }, 5 * 1000);
     }
@@ -85,40 +85,56 @@
             generateSettingsMenu();
         });
 
-        uiContainer.appendChild(settingImage)
-        uiContainer.appendChild(image)
+        uiContainer.appendChild(settingImage);
+        uiContainer.appendChild(image);
 
-        holder.appendChild(uiContainer)
+        holder.appendChild(uiContainer);
 
     }
 
     function displayUI() {
-
         // if already exists.. no need to do anything
+        // this prevents the users from creating  mutiple instances
         if (!document.getElementById("my-container")) {
+
             // get a reference to youtube player
             ytPlayer = document.getElementsByTagName('video')[0];
             console.log(ytPlayer);
 
-            chrome.runtime.sendMessage({ data: true }, function(response) {
-                console.log(response.data);
-                if (response.data) {
-                    // data exists in DB
-                    // isPresentInDB = true;
-                    videoInfo = response.data;
-                    l = videoInfo["labels"];
-                    tr = videoInfo["timeRatios"];
-                    ts = videoInfo["timeStampsInSeconds"];
-                    console.log("PRESENT IN FIRESTORE");
-                    // present in database
-                    // directly generate UI
-                    generateUI(videoInfo["labels"], videoInfo["timeRatios"], videoInfo["timeStampsInSeconds"]);
-                } else {
-                    // get data from the description
-                    // and then generate UI
-                    getData();
-                }
-            });
+            // first check to see if data is available in description 
+            // getData() return 0 if timestamps are not present in the description
+            if (!getData()) {
+                // query data from firestore
+                chrome.runtime.sendMessage({ data: true }, function(response) {
+                    console.log(response.data);
+                    if (response.data) {
+                        // data exists in firestore
+
+                        // isPresentInDB = true;
+                        videoInfo = response.data;
+
+                        // for regenrating UI
+                        l = videoInfo["labels"];
+                        ts = videoInfo["timeStampsInSeconds"];
+
+                        // present in database
+                        console.log("PRESENT IN FIRESTORE");
+                        let timeRatios = computeTimeRatios(videoInfo["timeStampsInSeconds"]);
+                        tr = timeRatios;
+                        // directly generate UI
+                        generateUI(videoInfo["labels"], timeRatios, videoInfo["timeStampsInSeconds"]);
+                    } else {
+                        // no data present for the current video
+                        if (!document.querySelector("#ts-nfm-c")) {
+                            //////////////////////////////////////////////////////
+                            // no data found
+                            // dislay a message requesting to generate time-stamps
+                            //////////////////////////////////////////////////////
+                            displayNotFoundMessage();
+                        }
+                    }
+                });
+            }
         }
         // // if already exists.. no need to do anything
         // if (!document.getElementById("my-container")) {
@@ -137,6 +153,7 @@
 
     function getData() {
         // get data from description
+        console.log("CHECKING IN DESCRIPTION");
         let description = document.getElementById("columns").querySelector("#description").textContent;
         let totalTime = document.querySelector(".ytp-time-duration").innerText;
         console.log(description);
@@ -145,14 +162,7 @@
         let match = regex.exec(description);
         // console.log(match);
         if (match === null) {
-            //////////////////////////////////////////////////////
-            // no data found
-            // dislay a message requesting to generate time-stamps
-            //////////////////////////////////////////////////////
-            console.log("Sorry No timestamps found");
-            if (!document.querySelector("#ts-nfm-c")) {
-                displayNotFoundMessage();
-            }
+            console.log("Sorry No timestamps found in description");
             return 0;
         }
 
@@ -205,6 +215,8 @@
         setTimeout(() => {
             generateUI(labels, timeRatios, timeStampsInSeconds);
         }, 0);
+
+        return 1;
     }
 
     // supported time stamps...
