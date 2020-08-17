@@ -36,6 +36,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 500;
 }
 
 #ts-taSettings {
@@ -162,9 +163,10 @@ input[type="color"]::-webkit-color-swatch {
     text-transform: none;
     font-style: italic;
     padding-bottom: 20px;
-    font-size: 12px;
+    font-size: 13px;
     font-family: Arial, Helvetica, sans-serif;
     padding-right: 40px;
+    padding-top: 3px;
 }
 
 
@@ -174,6 +176,7 @@ input[type="color"]::-webkit-color-swatch {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-left: 10px;
 }
 
 #ts-set-bc>button {
@@ -224,6 +227,7 @@ input[type="color"]::-webkit-color-swatch {
     width: 90px;
     align-items: center;
     justify-content: space-evenly;
+    z-index: 500;
 }
 
 #ts-mui-c:hover {
@@ -262,7 +266,7 @@ input[type="color"]::-webkit-color-swatch {
     margin-top: auto;
     margin-bottom: auto;
     right: 30px;
-    z-index: 9999;
+    z-index: 500;
     overflow-y: scroll;
     /* background-color: rgb(0, 0, 0); */
 }
@@ -341,7 +345,7 @@ input[type="color"]::-webkit-color-swatch {
     right: 30px;
     top: 0px;
     bottom: 0px;
-    z-index: 999;
+    z-index: 499;
     padding-left: 30px;
     padding-right: 30px;
     box-sizing: border-box;
@@ -358,10 +362,12 @@ input[type="color"]::-webkit-color-swatch {
     color: black;
     opacity: 0.9;
     margin-bottom: 10px;
+    outline: none;
 }
 
 #ts-nfm-c>button:hover {
-    background: lightgreen;
+    background: #8fb149;
+    color: white;
     cursor: pointer;
 }
 
@@ -397,3 +403,7 @@ input[type="color"]::-webkit-color-swatch {
 
 
 /*==================== ends here =====================*/
+
+.ts-last-tsUI {
+    background-color: red !important;
+}

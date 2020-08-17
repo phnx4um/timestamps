@@ -1,10 +1,10 @@
 (function() {
 
-    let l; // label 
+    let l; // label
     let tr; // ratios
     let ts; // stamps in seconds
 
-    // get the values from the chrome storage..if present 
+    // get the values from the chrome storage..if present
     // otherwise these are the default values
     let labelColor = "#0000FF";
     let timeStampColor = "#FF7F50";
@@ -63,10 +63,27 @@
         });
 
         setTimeout(() => {
-            holder = document.getElementById("player-container").querySelector("#container").querySelector("#movie_player");
-            console.log(holder.offsetHeight);
-            createMainUI();
+            let pc = document.getElementById("player-container");
+            let c = pc.querySelector("#container");
 
+            // if holder exists.....
+            // TODO:
+            if (!(c === null)) {
+                holder = c.querySelector("#movie_player");
+                console.log(holder.offsetHeight);
+                createMainUI();
+            } else {
+                var id = setInterval(() => {
+                    console.log("checking");
+                    let x = document.getElementById("player-container").querySelector("#container")
+                    if (x) {
+                        holder = x.querySelector("#movie_player");
+                        console.log(holder.offsetHeight);
+                        createMainUI();
+                        clearInterval(id);
+                    }
+                }, 5 * 1000);
+            }
         }, 5 * 1000);
     }
 
@@ -101,7 +118,7 @@
             ytPlayer = document.getElementsByTagName('video')[0];
             console.log(ytPlayer);
 
-            // first check to see if data is available in description 
+            // first check to see if data is available in description
             // getData() return 0 if timestamps are not present in the description
             if (!getData()) {
                 // query data from firestore
@@ -183,8 +200,10 @@
 
         // generate arrays
         while (match) {
-            timeStamps.push(timeToHHMMSS(match[timeIndex]));
-            labels.push(match[labelIndex]);
+            if (match[timeIndex] != undefined && match[labelIndex] != undefined) {
+                timeStamps.push(timeToHHMMSS(match[timeIndex]));
+                labels.push(match[labelIndex]);
+            }
             match = regex.exec(description)
         }
 
@@ -251,7 +270,7 @@
         // check if the array is increasing //maybe check for all values
         // for now this is fine
         if (timeStampsInSeconds[0] < timeStampsInSeconds[1]) {
-            // sequnce is increasing 
+            // sequnce is increasing
             // do nothing
             return {
                 timeStampsInSeconds: timeStampsInSeconds,
@@ -272,13 +291,13 @@
     function formatLabels(labels, timeIndex) {
         let result = labels;
         if (timeIndex === 1) {
-            // time -> label 
+            // time -> label
             if (labels.every(s => s[0] == labels[0][0])) {
                 result = labels.map(s => s.slice(1).trim());
             }
         }
         if (timeIndex === 4) {
-            // label -> time 
+            // label -> time
             if (labels.every(s => s[s.length - 1] == labels[0].slice(-1))) {
                 result = labels.map(s => s.slice(0, -1).trim());
             }
@@ -311,10 +330,10 @@
 
         let timeStampContainer = document.createElement("div");
         timeStampContainer.id = "tsc";
-        timeStampContainer.style.visibility = "hidden";
+        // timeStampContainer.style.visibility = "hidden";
         let labelContainer = document.createElement("div");
         labelContainer.id = "lc"
-        labelContainer.style.visibility = "hidden";
+            // labelContainer.style.visibility = "hidden";
 
         divContainer.appendChild(labelContainer);
         divContainer.appendChild(timeStampContainer);
@@ -394,7 +413,13 @@
                 timeStampUI.id = "ts" + index.toString();
                 // console.log(divContainer.offsetHeight);
                 timeStampUI.style.height = heights[index] + "px";
-                // timeStampUI.style.backgroundColor = random_bg_color();
+                // last time stamp
+                if (index === labels.length - 1) {
+                    // change color of the last tsUI to indicate end
+                    console.log("MATCHHHHHHH");
+                    timeStampUI.classList.add("ts-last-tsUI");
+                }
+
 
                 timeStampContainer.appendChild(timeStampUI);
                 labelContainer.appendChild(labelDiv);
@@ -477,7 +502,7 @@
         // TODO: add code to allow to submit timestamps
         let button = document.createElement("button");
         button.innerHTML = "ADD";
-
+        button.onclick = function() { window.open('https://timeline-62fb9.web.app/', '_blank') };
         //div to remove this popup
         let removeDiv = document.createElement("div");
         removeDiv.id = "ts-nfm-rc"
@@ -511,8 +536,8 @@
 
     // generate this when settings button is clicked
     function generateSettingsMenu() {
-        ////////////////////////////////////////////// 
-        // SETTINGS MENU CODE 
+        //////////////////////////////////////////////
+        // SETTINGS MENU CODE
         //////////////////////////////////////////////
 
         let TAsettingsMenu = document.createElement("div");
@@ -580,7 +605,8 @@
         displayOptionContainer.className = "ts-set-doc";
         // text
         let t = document.createElement("div");
-        t.innerText = "show only labels";
+        t.innerText = "DISPLAY ONLY LABELS";
+        t.id = "ts-set-pro";
         // radio button
         var x = document.createElement("INPUT");
         x.id = "ts-set-UIcheck"
@@ -588,8 +614,8 @@
         x.checked = simpleUI;
 
         let extraInfo = document.createElement("div")
-        extraInfo.innerText = "PRO ";
-        extraInfo.id = "ts-set-pro";
+        extraInfo.innerText = " ";
+
 
         displayOptionContainer.appendChild(t);
         displayOptionContainer.appendChild(x);
@@ -601,7 +627,7 @@
         let hr2 = document.createElement("hr");
         hr2.className = "ts-set-divider";
 
-        // save button and close 
+        // save button and close
         let buttonContainer = document.createElement("div");
         buttonContainer.id = "ts-set-bc";
 
@@ -665,7 +691,7 @@
     function addTimeStamps() {
         //create UI
 
-        // main container 
+        // main container
         let container = document.createElement("div");
         container.id = "ts-add-container";
         holder.appendChild(container);
@@ -688,7 +714,7 @@
         textAreaContainer.appendChild(tsResult);
         textAreaContainer.appendChild(hint);
 
-        // button container 
+        // button container
         let bc = document.createElement("div");
         bc.id = "ts-add-bc";
 
