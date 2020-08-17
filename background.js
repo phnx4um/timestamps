@@ -2,16 +2,19 @@
 const regWatch = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/watch\?+/gm;
 
 var firebaseConfig = {
-    apiKey: "AIzaSyBQ7GK_X0UqLeiyxSWNifRKi8FNteXjJW8",
-    authDomain: "timestamps-47c23.firebaseapp.com",
-    databaseURL: "https://timestamps-47c23.firebaseio.com",
-    projectId: "timestamps-47c23",
-    storageBucket: "timestamps-47c23.appspot.com",
-    messagingSenderId: "1012714644423",
-    appId: "1:1012714644423:web:6de7d681954595e9e6efe2"
+    apiKey: "AIzaSyAOHWshJ0sUoAkqdG-1AmJFcJDOdQyiAfc",
+    authDomain: "timeline-62fb9.firebaseapp.com",
+    databaseURL: "https://timeline-62fb9.firebaseio.com",
+    projectId: "timeline-62fb9",
+    storageBucket: "timeline-62fb9.appspot.com",
+    messagingSenderId: "957475293099",
+    appId: "1:957475293099:web:568dd3e7aa053e656934ee",
+    measurementId: "G-LCYC0D75ZT"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+// firebase.analytics();
 const database = firebase.firestore();
 
 

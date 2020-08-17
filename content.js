@@ -123,12 +123,12 @@
             if (!getData()) {
                 // query data from firestore
                 chrome.runtime.sendMessage({ data: true }, function(response) {
-                    console.log(response.data);
-                    if (response.data) {
+                    console.log(response.data.default);
+                    if (response.data.default) {
                         // data exists in firestore
 
                         // isPresentInDB = true;
-                        videoInfo = response.data;
+                        videoInfo = response.data.default;
 
                         // for regenrating UI
                         l = videoInfo["labels"];
