@@ -123,8 +123,8 @@
             if (!getData()) {
                 // query data from firestore
                 chrome.runtime.sendMessage({ data: true }, function(response) {
-                    console.log(response.data.default);
-                    if (response.data.default) {
+                    console.log(response);
+                    if (response.data) {
                         // data exists in firestore
 
                         // isPresentInDB = true;

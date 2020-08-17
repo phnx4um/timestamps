@@ -70,6 +70,10 @@ chrome.runtime.onMessage.addListener(
                 .then(function(doc) {
                     var value = doc.data();
                     console.log(value);
+                    if (value === undefined) {
+                        value = false;
+                    }
+                    console.log(value);
                     // send the data to content script..
                     sendResponse({ data: value });
                 })
