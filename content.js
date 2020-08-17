@@ -90,6 +90,7 @@
     function createMainUI() {
         let uiContainer = document.createElement("div");
         uiContainer.id = "ts-mui-c";
+
         var image = document.createElement("img");
         image.src = chrome.runtime.getURL("images/linear.png");
         image.id = "activate-ext";
@@ -110,9 +111,19 @@
     }
 
     function displayUI() {
+        if (document.querySelector("#ts-nfm-c")) {
+            document.querySelector("#ts-nfm-c").remove();
+        }
         // if already exists.. no need to do anything
         // this prevents the users from creating  mutiple instances
         if (!document.getElementById("my-container")) {
+
+            let mainUI = document.getElementById("ts-mui-c");
+            let loaderChild = document.createElement("div");
+            loaderChild.id = "ts-l-c";
+            loaderChild.innerHTML = '<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>';
+            mainUI.appendChild(loaderChild);
+
 
             // get a reference to youtube player
             ytPlayer = document.getElementsByTagName('video')[0];
@@ -140,6 +151,7 @@
                         tr = timeRatios;
                         // directly generate UI
                         generateUI(videoInfo["labels"], timeRatios, videoInfo["timeStampsInSeconds"]);
+                        document.getElementById("ts-l-c").remove();
                     } else {
                         // no data present for the current video
                         if (!document.querySelector("#ts-nfm-c")) {
@@ -149,6 +161,7 @@
                             //////////////////////////////////////////////////////
                             displayNotFoundMessage();
                         }
+                        document.getElementById("ts-l-c").remove();
                     }
                 });
             }
@@ -231,8 +244,11 @@
         tr = timeRatios
         ts = timeStampsInSeconds
 
+
+
         setTimeout(() => {
             generateUI(labels, timeRatios, timeStampsInSeconds);
+            document.getElementById("ts-l-c").remove();
         }, 0);
 
         return 1;
