@@ -17,41 +17,53 @@ firebase.initializeApp(firebaseConfig);
 // firebase.analytics();
 const database = firebase.firestore();
 
+// chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
+//     console.log(details);
+//     // match if its youtube watch page
+//     if ((details.url).match(regWatch)) {
+//         // let videoID;
+//         console.log(details.url);
+//         chrome.tabs.executeScript(null, { file: "content.js" });
 
-chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
+//         // videoID = getID(details.url);
+//         // console.log(videoID);
+
+//         // let key = "videos/" + videoID;
+//         // console.log(key);
+//         // get the value for that key from the database
+//         // let videoRef = database.ref(key);
+//         // videoRef.once('value')
+//         //     .then(function(snapshot) {
+//         //         var value = snapshot.val();
+//         //         console.log(value);
+//         //         // send the data to content script..
+//         //         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+//         //             chrome.tabs.sendMessage(tabs[0].id, value);
+//         //         });
+//         //     })
+//         //     .catch(e => {
+//         //         console.log(e);
+//         //     });
+
+//     } else {
+//         // any other website except youtube or
+//         // any other youtube page except the one with watch in the URL
+//         console.log("NO need to run the script");
+//     }
+// });
+
+
+chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
     console.log(details);
-    // match if its youtube watch page
-    if ((details.url).match(regWatch)) {
-        // let videoID;
+    if (!details.frameId) {
         console.log(details.url);
-        chrome.tabs.executeScript(null, { file: "content.js" });
-
-        // videoID = getID(details.url);
-        // console.log(videoID);
-
-        // let key = "videos/" + videoID;
-        // console.log(key);
-        // get the value for that key from the database
-        // let videoRef = database.ref(key);
-        // videoRef.once('value')
-        //     .then(function(snapshot) {
-        //         var value = snapshot.val();
-        //         console.log(value);
-        //         // send the data to content script..
-        //         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        //             chrome.tabs.sendMessage(tabs[0].id, value);
-        //         });
-        //     })
-        //     .catch(e => {
-        //         console.log(e);
-        //     });
-
-    } else {
-        // any other website except youtube or
-        // any other youtube page except the one with watch in the URL
-        console.log("NO need to run the script");
+        chrome.tabs.executeScript(details.tabId, { file: 'content.js' });
     }
-
+}, {
+    url: [
+        { hostEquals: 'youtu.be' },
+        { hostEquals: 'www.youtube.com', pathPrefix: '/watch' },
+    ],
 });
 
 chrome.runtime.onMessage.addListener(
