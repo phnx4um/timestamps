@@ -189,36 +189,47 @@
         console.log(description);
         console.log(totalTime);
 
-        let match = regex.exec(description);
-        // console.log(match);
-        if (match === null) {
-            console.log("Sorry No timestamps found in description");
-            return 0;
-        }
+        // let match = regex.exec(description);
+        // // console.log(match);
+        // if (match === null) {
+        //     console.log("Sorry No timestamps found in description");
+        //     return 0;
+        // }
 
         let timeStamps = [];
         let labels = [];
 
-        let timeIndex;
-        let labelIndex;
+        // let timeIndex;
+        // let labelIndex;
 
-        // code below expects the timestamps to follow the same format for a particular video
-        if (match[1] != undefined) {
-            timeIndex = 1;
-            labelIndex = 2;
-        } else {
-            timeIndex = 4;
-            labelIndex = 3;
+        // // code below expects the timestamps to follow the same format for a particular video
+        // if (match[1] != undefined) {
+        //     timeIndex = 1;
+        //     labelIndex = 2;
+        // } else {
+        //     timeIndex = 4;
+        //     labelIndex = 3;
+        // }
+
+        // // generate arrays
+        // while (match) {
+        //     if (match[timeIndex] != undefined && match[labelIndex] != undefined) {
+        //         timeStamps.push(timeToHHMMSS(match[timeIndex]));
+        //         labels.push(match[labelIndex]);
+        //     }
+        //     match = regex.exec(description)
+        // }
+
+        let results = getTSNew(description);
+        if (!results) {
+            console.log("Sorry No timestamps found in description");
+            return 0;
         }
 
-        // generate arrays
-        while (match) {
-            if (match[timeIndex] != undefined && match[labelIndex] != undefined) {
-                timeStamps.push(timeToHHMMSS(match[timeIndex]));
-                labels.push(match[labelIndex]);
-            }
-            match = regex.exec(description)
-        }
+
+        labels = results.result;
+        timeStamps = results.time;
+
 
         console.log(timeStamps);
         console.log(labels);
@@ -236,7 +247,7 @@
         console.log(`LABELS: ${labels}`);
         console.log(`TIMESTAMPS IN SECONDS ${timeStampsInSeconds}`);
 
-        labels = formatLabels(labels, timeIndex)
+        // labels = formatLabels(labels, timeIndex)
 
         let timeRatios = computeTimeRatios(timeStampsInSeconds);
 
@@ -703,6 +714,50 @@
         modelContianer.appendChild(TAsettingsMenu);
         document.getElementsByTagName("body")[0].appendChild(modelContianer);
     }
+
+    function getTSNew(input) {
+        let regex = /((?:\d{1,2})?(?::\d{1,2})?:\d{1,2})/;
+        let arr = input.split(/[\r\n]+/); // split
+
+        let time = [];
+        let labels = [];
+        arr.forEach(e => {
+            let match;
+            if (match = regex.exec(e)) {
+                beforeLength = match.index
+                afterLenght = e.length - (match.index + match[1].length)
+
+                time.push(timeToHHMMSS(match[1]));
+
+                if (afterLenght > beforeLength) {
+                    labels.push(e.substring(match.index + match[1].length).trim())
+                } else {
+                    labels.push(e.substring(0, match.index).trim());
+                }
+
+            }
+        });
+
+        let result = labels;
+
+        if (labels.every(s => s[0] == labels[0][0])) {
+            result = labels.map(s => s.substring(1).trim());
+        }
+        if (labels.every(s => s[s.length - 1] == labels[0][labels[0].length - 1])) {
+            result = result.map(s => s.substring(0, s.length - 1).trim());
+        }
+
+
+        console.log(time);
+        console.log(result);
+        if (time.length === 0) {
+            return false;
+        } else {
+            return { result, time };
+        }
+
+    }
+
 
     function addTimeStamps() {
         //create UI
